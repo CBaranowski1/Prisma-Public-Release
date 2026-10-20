@@ -43,4 +43,4 @@ markitdown[docx,pptx,xlsx,xls]==0.1.5
 # optional: verify.py works fine without it (SQL just lands in
 # unverified_languages), but it MUST be present for Phase 41's live measurement
 # and Phase 44's continuous-eval guardrail to genuinely exercise the SQL tier.
-sqlglot==30.12.0
+sqlglot==30.23.0
