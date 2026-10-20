@@ -1,0 +1,69 @@
+name: One-time verified Prisma source import
+on:
+  push:
+    paths:
+      - .github/workflows/import-public-source.yml
+permissions:
+  contents: write
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    if: github.repository == 'CBaranowski1/Prisma-Public-Release'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: true
+      - name: Download checksum-pinned audited snapshot
+        env:
+          SOURCE_URL: 'https://sdmntprwestus3.oaiusercontent.com/files/00000000-3718-81fd-9008-b4202fc47728/raw?se=2026-10-20T20%3A24%3A52Z&sp=r&sv=2026-02-06&sr=b&scid=1da91d94-5812-5658-9637-ac697ccd1f17&skoid=c69179d1-5b5d-430f-afa3-b9bdcf9d6497&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-20T18%3A22%3A55Z&ske=2026-10-21T18%3A22%3A55Z&sks=b&skv=2026-02-06&sig=pBot1R0aADNsSqOFTS1YDbivdDGKWUCoiA4BhT%2BxEUk%3D'
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 4 --retry-delay 2 --connect-timeout 15 --max-time 180 --silent --show-error \
+            "$SOURCE_URL" --output "$RUNNER_TEMP/source-artifact.zip"
+          printf '%s  %s\n' 'dae6bcafa3dde92e0d29cf53513955d7705d1a6f10d27070d7332aa77cd841e9' "$RUNNER_TEMP/source-artifact.zip" | sha256sum -c -
+          unzip -p "$RUNNER_TEMP/source-artifact.zip" public-snapshot.tar.gz > "$RUNNER_TEMP/public-snapshot.tar.gz"
+          printf '%s  %s\n' 'bdb7349ef66a92c17925e2e4cb9f4b758214c1d9aa9b97a798420d9d2ee62709' "$RUNNER_TEMP/public-snapshot.tar.gz" | sha256sum -c -
+      - name: Validate file list, exclude private material and extract
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import os, pathlib, tarfile
+          target=pathlib.Path(os.environ["RUNNER_TEMP"])/"candidate-source"
+          target.mkdir()
+          pkg=pathlib.Path(os.environ["RUNNER_TEMP"])/"public-snapshot.tar.gz"
+          with tarfile.open(pkg,"r:gz") as archive:
+              members=archive.getmembers()
+              assert len(members)==1371, f"Expected exactly 1371 source files; got {len(members)}"
+              names=set()
+              for m in members:
+                  p=pathlib.PurePosixPath(m.name)
+                  assert not p.is_absolute() and ".." not in p.parts and m.isfile(), f"Unsafe file: {m.name}"
+                  assert m.name not in names, f"Duplicate path: {m.name}"
+                  names.add(m.name)
+                  assert not m.name.startswith((".planning/",".release-tools/","brains/precision-audit/")), f"Private material: {m.name}"
+                  assert not (m.name.startswith("data/") and not m.name.startswith("data/skills/system/")), f"Runtime data: {m.name}"
+                  assert not (m.name.startswith("brains/") and any(x in p.parts for x in ("vault","conversations","knowledge","index","memory_vectors"))), f"Private brain data: {m.name}"
+              for required in ("app.py","server_main.py","src/agent_loop.py","src/answer_pipeline.py","src/council/orchestrator.py","routes/query_routes.py","static/index.html","Dockerfile","docker-compose.yml","requirements.txt",".gitignore"):
+                  assert required in names, f"Missing core file: {required}"
+              archive.extractall(target, members=members, filter="data")
+          print(f"Validated {len(names)} source files; private Git history absent")
+          PY
+      - name: Install validated source into public repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          find . -mindepth 1 -maxdepth 1 ! -name .git ! -name .github -exec rm -rf -- {} +
+          if [ -d .github ]; then
+            find .github -mindepth 1 -maxdepth 1 ! -name workflows -exec rm -rf -- {} +
+          fi
+          rsync -a --exclude='/.github/workflows/' "$RUNNER_TEMP/candidate-source/" ./
+          test -s app.py
+          test -s src/agent_loop.py
+          test -s src/council/orchestrator.py
+          git add -A
+          git config user.name 'Prisma source release'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Publish audited 1371-file Prisma source snapshot'
+          git push origin HEAD:main
