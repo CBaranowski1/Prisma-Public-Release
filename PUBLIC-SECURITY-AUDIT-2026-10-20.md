@@ -10,6 +10,10 @@ Scope: published `CBaranowski1/Prisma-Public-Release` source, the validated 1,37
 - The release-candidate validation passed Python compilation, Ruff, JavaScript parsing, Bandit, a local FastAPI smoke test, and **3,462 passed / 129 skipped** tests. Its redacted Gitleaks scans reported no leaks.
 - Public GitHub CI and redacted secret scanning have completed successfully on published commits. These tools cannot prove absence of every possible secret, personal datum, or malicious dependency.
 
+## New live dependency-advisory results
+
+The initial live `pip-audit` check identified **27 advisories across five packages**: `certifi`, `urllib3`, `mcp`, `PyJWT` and `pypdf`. A branch-only update refreshed `requirements.in`, `requirements.txt` and `requirements-dev.txt` with pinned, hashed patched versions. The lock regeneration job then reran `pip-audit` successfully with **no advisories reported for that production lock at audit time**. The JavaScript lock audit passed the high-severity threshold. These fixes are not on `main` until this pull request is merged and its full tests pass.
+
 ## Findings and actions
 
 | Priority | Finding | Disposition |
