@@ -1,0 +1,47 @@
+name: Public supply-chain review
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: "25 10 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  python-advisories:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.11"
+      - name: Check pinned Python dependency advisories
+        run: |
+          python -m pip install pip-audit
+          python -m pip_audit -r requirements.txt
+
+  javascript-advisories:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: "20"
+      - name: Audit frontend lockfile
+        run: npm audit --package-lock-only --audit-level=high
+      - name: Audit desktop lockfile if present
+        run: |
+          if [ -f desktop/package-lock.json ]; then
+            cd desktop
+            npm audit --package-lock-only --audit-level=high
+          fi
