@@ -41,6 +41,4 @@ integrations, or deployment recipes: such omissions may break the app.
    against the actual exported implementation.
 7. Obtain owner approval for the exact release tree before publication.
 
-A private CI green status is not proof that a derived public snapshot passed
-these checks. Until the release is independently tested and a new public
-repository created, the release status is **not shipped**.
+**Publication status:** The source has been published in this clean-history repository, and the exported application passed a local-startup smoke test and automated source security gates. Public CI and dependency security checks are enabled. This is **not** a verified production deployment: authentication is disabled, full shell sandboxing is incomplete, and licensing/third-party notice review remains open (see `PUBLIC-SECURITY-AUDIT-2026-10-20.md`). A private CI result must not be substituted for current public CI on later updates.
