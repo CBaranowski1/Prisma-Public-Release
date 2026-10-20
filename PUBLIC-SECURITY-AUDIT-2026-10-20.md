@@ -12,7 +12,7 @@ Scope: published `CBaranowski1/Prisma-Public-Release` source, the validated 1,37
 
 ## New live dependency-advisory results
 
-The initial live `pip-audit` check identified **27 advisories across five packages**: `certifi`, `urllib3`, `mcp`, `PyJWT` and `pypdf`. A branch-only update refreshed `requirements.in`, `requirements.txt` and `requirements-dev.txt` with pinned, hashed patched versions. The lock regeneration job then reran `pip-audit` successfully with **no advisories reported for that production lock at audit time**. The JavaScript lock audit passed the high-severity threshold. These fixes are not on `main` until this pull request is merged and its full tests pass.
+The initial live `pip-audit` check identified **27 advisories across five packages**: `certifi`, `urllib3`, `mcp`, `PyJWT` and `pypdf`. A branch-only update refreshed `requirements.in`, `requirements.txt` and `requirements-dev.txt` with pinned, hashed patched versions. The lock regeneration job then reran `pip-audit` successfully with **no advisories reported for that production lock at audit time**. The JavaScript lock audit passed the high-severity threshold. These patches were merged into `main` after CI, secret scanning and the new supply-chain audit passed on the reviewed pull-request head. Advisory status can change after publication.
 
 ## Findings and actions
 
@@ -25,6 +25,8 @@ The initial live `pip-audit` check identified **27 advisories across five packag
 | Low/medium | A historical one-time import workflow contains a time-limited artifact-download URL pointing to the sanitized source candidate. | Import workflow removed from current tree. Historical commit remains accessible; link expiration should be verified. It does not appear to contain an operational provider secret. |
 | Medium governance | Default public branch was observed without branch protection. | Enable protection / rulesets, require passing CI and scans, disallow force pushes and branch deletion. Needs repo administration. |
 | Incomplete | Live Dependabot alert details, current dependency advisory state, full third-party redistribution licensing, PostgreSQL-specific E2E and native desktop packaging could not be exhaustively confirmed. | Supply-chain CI audit added. Review advisories and dependency licenses before claiming all-clear. |
+
+Additional third-party license notice discrepancies are tracked in [issue #16](https://github.com/CBaranowski1/Prisma-Public-Release/issues/16), because linked notice files are currently missing from the published tree. This is a redistribution-compliance review item, not an API credential leak. The project HTML documentation was also corrected to link to this public repository rather than the private development remote.
 
 ## Recommended controls
 
