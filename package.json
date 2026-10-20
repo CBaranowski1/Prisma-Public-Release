@@ -19,6 +19,6 @@
     "@codemirror/view": "^6.43.7",
     "codemirror": "^6.0.2",
     "diff": "^9.0.0",
-    "esbuild": "^0.28.1"
+    "esbuild": "^0.28.2"
   }
 }
