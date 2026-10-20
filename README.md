@@ -3,11 +3,7 @@
 > **Public source release.** Application code, tests, council/agent runtimes, bundled system skills and generic configuration are included. Private vault/brain knowledge, personal state, credentials and customer-specific configurations are not. Add your own model endpoint and knowledge data. See [architecture](docs/PUBLIC-TOPOLOGY.md) and [release scope](PUBLIC-SNAPSHOT.md).
 
 
-```
-───────────────────────────────────────────────
- ⊹ ࣪ ˖ ૮( ˶ᵔ ᵕ ᵔ˶ )っ  Prisma vers. 1.0
-───────────────────────────────────────────────
-```
+This a very sanitized release, its about as bare bones of an architecture as it gets. There was a lot of customization and building form the back end that made this all work. I recommend using this architecture as a blue print only. This not a plug and play product a dev needs to take some serious time to customize this to meet their specific needs. -Cody Baranowski
 
 
 
@@ -432,18 +428,3 @@ All user data lives in `data/` (gitignored): `app.db` (sessions, messages, docum
 
 ## License
 MIT -- see [LICENSE](LICENSE) and [ACKNOWLEDGMENTS.md](ACKNOWLEDGMENTS.md).
-
-```
-                                  |
-                                 |||
-                                |||||
-                  |    |    |   |||||||
-                 )_)  )_)  )_)   ~|~
-                )___))___))___)\  |
-               )____)____)_____)\\|
-             _____|____|____|_____\\\__
-             \                       /
-       ~^~^~~^~^~~^~^~~^~^~~^~^~~^~^~~^~^~~^~^~
-               ~^~  all aboard!  ~^~
-       ~^~^~~^~^~~^~^~~^~^~~^~^~~^~^~~^~^~~^~^~
-```
