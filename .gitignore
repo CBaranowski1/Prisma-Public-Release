@@ -14,14 +14,32 @@ venv/
 .env
 .env.*
 !.env.example
+.env.local
+.env.*.local
+.env.development
+.env.production
+.env.staging
+.env.test
+.envrc
 *.pem
 *.key
 *.p12
 *.pfx
 *.kdbx
+*.crt
+*.cer
+*.csr
+*.jks
+*.p8
+*.ovpn
+*.asc
+*.gpg
+*.enc
 credentials.json
 secrets.json
 auth.json
+**/secrets/**
+**/credentials/**
 
 # Data — all user data stays local. The curated system-skill packages are
 # source assets, not user data, and must survive a clean checkout.
@@ -42,6 +60,8 @@ services/search_engine_error.log
 *.sqlite3
 *.dump
 *.backup
+*.bak
+*.old
 
 # Node
 node_modules/
