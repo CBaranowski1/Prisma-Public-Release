@@ -1,0 +1,13 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "identifier": "default",
+  "description": "Default capability set for the main window",
+  "windows": ["main"],
+  "permissions": ["core:default", "allow-ide-control"],
+  "remote": {
+    "urls": [
+      "http://127.0.0.1:7000",
+      "http://localhost:7000"
+    ]
+  }
+}

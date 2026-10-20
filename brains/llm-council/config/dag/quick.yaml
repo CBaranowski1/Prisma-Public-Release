@@ -1,0 +1,47 @@
+# quick.yaml — lean council for a fast check (selected via mode: quick).
+#
+#   triage -> {Correctness, Performance} -> chief
+#
+# Skips the Security/Maintainability reviewers AND the mid-overseer layer, and
+# points the chief at a 14B reasoning model instead of the 22B, so a quick review
+# is ~4 model loads instead of 9. Use the full DAG (aspect_grouped) for depth.
+
+id: quick
+description: "Lean council: triage -> Correctness + Performance -> chief"
+
+seats:
+  - id: triage
+    role: triage
+    model_ref: triage
+    lens: routing
+    stance: classifier
+    prompt_path: triage.md
+    temperature: 0.0
+    consumes: []
+
+  - id: reviewer_correctness
+    role: reviewer
+    model_ref: reviewer.correctness
+    lens: correctness
+    stance: "logic & edge-case skeptic"
+    prompt_path: reviewer_correctness.md
+    temperature: 0.2
+    consumes: [triage]
+
+  - id: reviewer_performance
+    role: reviewer
+    model_ref: reviewer.performance
+    lens: performance
+    stance: "efficiency / complexity hawk"
+    prompt_path: reviewer_performance.md
+    temperature: 0.2
+    consumes: [triage]
+
+  - id: overseer_chief
+    role: chief
+    model_ref: overseer.mid_b        # deepseek-r1:14b — faster arbiter than the 22B
+    lens: "final verdict"
+    stance: "decisive arbiter"
+    prompt_path: overseer_chief.md
+    temperature: 0.3
+    consumes: [reviewer_correctness, reviewer_performance]

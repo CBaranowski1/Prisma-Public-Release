@@ -1,0 +1,125 @@
+id: data_team
+description: 'Data team: triage -> data disciplines -> leads -> chief (shares memory pools)'
+seats:
+- id: triage
+  role: triage
+  model_ref: triage
+  lens: routing
+  stance: intake router
+  prompt_path: triage.md
+  temperature: 0.0
+  consumes: []
+- id: data_pipeline
+  role: reviewer
+  model_ref: reviewer.performance
+  lens: data engineering
+  stance: pipeline engineer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_a
+  consumes:
+  - triage
+- id: data_db
+  role: reviewer
+  model_ref: reviewer.correctness
+  lens: database design
+  stance: database architect
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_a
+  consumes:
+  - triage
+- id: data_sql
+  role: reviewer
+  model_ref: reviewer.correctness
+  lens: postgresql
+  stance: SQL optimization specialist
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_a
+  consumes:
+  - triage
+- id: data_oracle
+  role: reviewer
+  model_ref: reviewer.correctness
+  lens: oracle_plsql
+  stance: Oracle PL/SQL specialist
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_a
+  consumes:
+  - triage
+- id: data_quality
+  role: reviewer
+  model_ref: reviewer.correctness
+  lens: testing
+  stance: data-quality engineer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_b
+  consumes:
+  - triage
+- id: data_gov
+  role: reviewer
+  model_ref: reviewer.security
+  lens: data governance
+  stance: governance/privacy officer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_b
+  consumes:
+  - triage
+- id: data_perf
+  role: reviewer
+  model_ref: reviewer.performance
+  lens: performance
+  stance: data performance engineer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_b
+  consumes:
+  - triage
+- id: data_privacy
+  role: reviewer
+  model_ref: reviewer.security
+  lens: data privacy & compliance
+  stance: data privacy & compliance reviewer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_b
+  consumes:
+  - triage
+- id: data_lead
+  role: mid_overseer
+  model_ref: overseer.mid_a
+  lens: data delivery
+  stance: data lead
+  prompt_path: overseer_mid_a.md
+  temperature: 0.3
+  consumes:
+  - data_pipeline
+  - data_db
+  - data_sql
+  - data_oracle
+- id: data_risk
+  role: mid_overseer
+  model_ref: overseer.mid_b
+  lens: data risk & quality
+  stance: data risk lead
+  prompt_path: overseer_mid_b.md
+  temperature: 0.3
+  consumes:
+  - data_quality
+  - data_gov
+  - data_perf
+  - data_privacy
+- id: data_chief
+  role: chief
+  model_ref: overseer.chief
+  lens: data verdict
+  stance: head of data
+  prompt_path: overseer_chief.md
+  temperature: 0.3
+  consumes:
+  - data_lead
+  - data_risk

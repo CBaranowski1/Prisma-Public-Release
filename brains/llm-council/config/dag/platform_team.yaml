@@ -1,0 +1,114 @@
+id: platform_team
+description: 'Platform / cloud team: triage -> platform/backend/arch/observability/security -> eng & risk leads -> chief (shares memory pools)'
+seats:
+- id: triage
+  role: triage
+  model_ref: triage
+  lens: routing
+  stance: intake router
+  prompt_path: triage.md
+  temperature: 0.0
+  consumes: []
+- id: pf_platform
+  role: reviewer
+  model_ref: reviewer.performance
+  lens: platform engineering
+  stance: DevOps/platform engineer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_a
+  consumes:
+  - triage
+- id: pf_backend
+  role: reviewer
+  model_ref: reviewer.correctness
+  lens: backend services
+  stance: backend engineer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_a
+  consumes:
+  - triage
+- id: pf_arch
+  role: reviewer
+  model_ref: reviewer.correctness
+  lens: platform architecture
+  stance: software architect
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_a
+  consumes:
+  - triage
+- id: pf_observability
+  role: reviewer
+  model_ref: reviewer.performance
+  lens: observability
+  stance: observability/SRE engineer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_b
+  consumes:
+  - triage
+- id: pf_security
+  role: reviewer
+  model_ref: reviewer.security
+  lens: platform security
+  stance: platform-security engineer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_b
+  consumes:
+  - triage
+- id: pf_resilience
+  role: reviewer
+  model_ref: reviewer.correctness
+  lens: resilience
+  stance: resilience reviewer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_a
+  consumes:
+  - triage
+- id: pf_finops
+  role: reviewer
+  model_ref: reviewer.performance
+  lens: cloud cost / FinOps
+  stance: cloud cost / FinOps reviewer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_b
+  consumes:
+  - triage
+- id: pf_lead
+  role: mid_overseer
+  model_ref: overseer.mid_a
+  lens: platform quality
+  stance: platform eng lead
+  prompt_path: overseer_mid_a.md
+  temperature: 0.3
+  consumes:
+  - pf_platform
+  - pf_backend
+  - pf_arch
+  - pf_resilience
+- id: pf_risk
+  role: mid_overseer
+  model_ref: overseer.mid_b
+  lens: reliability risk
+  stance: reliability-risk lead
+  prompt_path: overseer_mid_b.md
+  temperature: 0.3
+  consumes:
+  - pf_observability
+  - pf_security
+  - pf_finops
+- id: pf_chief
+  role: chief
+  model_ref: overseer.chief
+  lens: platform verdict
+  stance: platform director
+  prompt_path: overseer_chief.md
+  temperature: 0.3
+  consumes:
+  - pf_lead
+  - pf_risk

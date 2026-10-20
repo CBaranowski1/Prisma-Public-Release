@@ -1,0 +1,64 @@
+# models.yaml — logical-name -> concrete model tag registry.
+# THE HOT-SWAP POINT. Seats reference logical names; swap a model by editing one
+# line here and reloading (no code change). Reasoning toggle is per logical model.
+#
+# ONE DISTINCT BRAIN PER CATEGORY — no model is reused across seats. Sized for a
+# 12 GB box: with the backend's keep_alive:0 and one-model-at-a-time scheduling,
+# each loads into a clean GPU, so even codestral:22b fits. The three overseers
+# stay in three distinct families: Qwen (mid_a) / DeepSeek (mid_b) / Mistral
+# (chief).
+
+models:
+  triage:
+    tag: "llama3.2:3b"             # fast router — code vs general + language
+    family: "meta"
+    think: false
+    est_mem_mb: 2500
+
+  reviewer.correctness:
+    tag: "deepseek-r1:7b"          # native reasoning — logic / edge-case skeptic
+    family: "deepseek"
+    think: true
+    est_mem_mb: 5000
+
+  reviewer.performance:
+    tag: "qwen2.5-coder:7b"        # code-specialized — efficiency / complexity hawk
+    family: "qwen-coder"
+    think: false
+    est_mem_mb: 5000
+
+  reviewer.security:
+    tag: "deepseek-coder-v2:16b"   # MoE code model — adversarial red-teamer
+    family: "deepseek-coder"
+    think: false
+    est_mem_mb: 9000
+
+  reviewer.maintainability:
+    tag: "gemma2:9b"               # Google instruct — readability / clarity advocate
+    family: "google"
+    think: false
+    est_mem_mb: 6500
+
+  overseer.mid_a:
+    tag: "qwen3:14b"               # Qwen, reasoning — engineering-quality tech lead
+    family: "qwen"
+    think: true
+    est_mem_mb: 9500
+
+  overseer.mid_b:
+    tag: "deepseek-r1:14b"         # DeepSeek, reasoning — risk & hygiene auditor
+    family: "deepseek"
+    think: true
+    est_mem_mb: 9000
+
+  overseer.chief:
+    tag: "mistral:7b"              # Mistral family — small, fast arbiter (fits 12 GB)
+    family: "mistral"
+    think: false
+    est_mem_mb: 4500
+
+  bot.small:
+    tag: "qwen2.5-coder:3b"        # small/fast — per-file sub-agent fan-out
+    family: "qwen-coder"
+    think: false
+    est_mem_mb: 2500

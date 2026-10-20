@@ -1,0 +1,202 @@
+id: fullstack_app_team
+description: 'Full-stack application build team: triage -> PM/UX/frontend/mobile/api/backend/db/devops/qa/security/arch/docs -> eng & risk leads -> chief (shares memory pools)'
+seats:
+- id: triage
+  role: triage
+  model_ref: triage
+  lens: routing
+  stance: intake router
+  prompt_path: triage.md
+  temperature: 0.0
+  consumes: []
+- id: fs_pm
+  role: reviewer
+  model_ref: reviewer.maintainability
+  lens: product scope
+  stance: product manager
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_a
+  consumes:
+  - triage
+- id: fs_ux
+  role: reviewer
+  model_ref: reviewer.maintainability
+  lens: user experience
+  stance: UX designer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_a
+  consumes:
+  - triage
+- id: fs_frontend
+  role: reviewer
+  model_ref: reviewer.maintainability
+  lens: frontend
+  stance: frontend engineer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_a
+  consumes:
+  - triage
+- id: fs_mobile
+  role: reviewer
+  model_ref: reviewer.maintainability
+  lens: mobile
+  stance: mobile engineer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_a
+  consumes:
+  - triage
+- id: fs_api
+  role: reviewer
+  model_ref: reviewer.correctness
+  lens: API design
+  stance: API designer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_a
+  consumes:
+  - triage
+- id: fs_backend
+  role: reviewer
+  model_ref: reviewer.correctness
+  lens: backend
+  stance: backend engineer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_b
+  consumes:
+  - triage
+- id: fs_db
+  role: reviewer
+  model_ref: reviewer.correctness
+  lens: database
+  stance: database engineer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_b
+  consumes:
+  - triage
+- id: fs_devops
+  role: reviewer
+  model_ref: reviewer.performance
+  lens: devops/deploy
+  stance: DevOps engineer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_b
+  consumes:
+  - triage
+- id: fs_qa
+  role: reviewer
+  model_ref: reviewer.correctness
+  lens: testing/QA
+  stance: QA engineer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_b
+  consumes:
+  - triage
+- id: fs_security
+  role: reviewer
+  model_ref: reviewer.security
+  lens: app security
+  stance: security engineer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_b
+  consumes:
+  - triage
+- id: fs_arch
+  role: reviewer
+  model_ref: reviewer.correctness
+  lens: architecture
+  stance: software architect
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_b
+  consumes:
+  - triage
+- id: fs_docs
+  role: reviewer
+  model_ref: reviewer.maintainability
+  lens: documentation
+  stance: technical writer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_b
+  consumes:
+  - triage
+- id: fs_a11y
+  role: reviewer
+  model_ref: reviewer.maintainability
+  lens: accessibility (a11y)
+  stance: accessibility (a11y) reviewer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_b
+  consumes:
+  - triage
+- id: fs_observability
+  role: reviewer
+  model_ref: reviewer.performance
+  lens: observability
+  stance: observability reviewer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_a
+  consumes:
+  - triage
+- id: fs_release
+  role: reviewer
+  model_ref: reviewer.correctness
+  lens: release engineering
+  stance: release engineering reviewer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_b
+  consumes:
+  - triage
+- id: fs_lead
+  role: mid_overseer
+  model_ref: overseer.mid_a
+  lens: build quality
+  stance: engineering delivery lead
+  prompt_path: overseer_mid_a.md
+  temperature: 0.3
+  consumes:
+  - fs_pm
+  - fs_ux
+  - fs_frontend
+  - fs_mobile
+  - fs_api
+  - fs_observability
+- id: fs_risk
+  role: mid_overseer
+  model_ref: overseer.mid_b
+  lens: build risk
+  stance: engineering-risk lead
+  prompt_path: overseer_mid_b.md
+  temperature: 0.3
+  consumes:
+  - fs_backend
+  - fs_db
+  - fs_devops
+  - fs_qa
+  - fs_security
+  - fs_arch
+  - fs_docs
+  - fs_a11y
+  - fs_release
+- id: fs_chief
+  role: chief
+  model_ref: overseer.chief
+  lens: ship verdict
+  stance: engineering director
+  prompt_path: overseer_chief.md
+  temperature: 0.3
+  consumes:
+  - fs_lead
+  - fs_risk

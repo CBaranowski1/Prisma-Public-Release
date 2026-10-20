@@ -1,0 +1,125 @@
+/* Prism Glass — Prisma default theme. Spectral dark glass. */
+:root[data-theme="prism-glass"]{
+  --bg:#0c0e16; --bg2:#131022; --panel:rgba(255,255,255,0.05);
+  --panel2:rgba(255,255,255,0.07); --line:rgba(255,255,255,0.10);
+  /* App core variables — matched to style.css :root block */
+  --fg:#eef0f8; --border:#1d2129; --red:#f0616d;
+  --accent:#8c7cf8; --accent2:#52c8b4;
+  --accent-grad:conic-gradient(from 200deg,#8c7cf8,#52c8b4,#f8c87c,#8c7cf8);
+  --ok:#52c8b4; --run:#f8c87c; --err:#f0616d;
+  --radius:14px; --glass-blur:12px;
+  --shadow:0 8px 32px rgba(0,0,0,0.35);
+}
+:root[data-theme="prism-glass"] body{
+  background:
+    radial-gradient(900px 600px at 80% -10%, rgba(140,124,248,0.16), transparent 60%),
+    radial-gradient(800px 500px at 25% 110%, rgba(82,200,180,0.10), transparent 60%),
+    linear-gradient(135deg,#0c0e16,#131022 55%,#0a1418);
+  background-attachment:fixed;
+}
+.glass{ background:var(--panel); backdrop-filter:blur(var(--glass-blur));
+  border:1px solid var(--line); border-radius:var(--radius); }
+
+/* Prism-glass cosmetic: frost the mode-switch pill (structure is in shell.css). */
+:root[data-theme="prism-glass"] .mode-switch{
+  background:var(--panel); backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--line);
+}
+:root[data-theme="prism-glass"] .mode-opt.active{
+  color:#e8e4ff; box-shadow:0 1px 6px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+/* Floating glass composer — lift the input bar off the surface. */
+:root[data-theme="prism-glass"] .chat-input-bar.floating-composer{
+  background:var(--panel); backdrop-filter:blur(var(--glass-blur));
+  border:1px solid var(--line); box-shadow:var(--shadow);
+}
+
+/* Brain-notes attribution chip — small outline badge on assistant messages
+   whose answer drew on external brain providers. Theme-agnostic. */
+/* ─── Brain tab UI ─── */
+.brain-view{
+  display:flex; flex-direction:column; gap:14px;
+  padding:28px 28px 40px; max-width:900px; width:100%;
+  margin:0 auto; box-sizing:border-box;
+}
+.brain-head{
+  display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
+}
+.brain-title{
+  margin:0; font-size:1.25rem; font-weight:600; color:var(--fg,#eef0f8);
+}
+.brain-provider{
+  background:var(--panel,rgba(255,255,255,0.05));
+  border:1px solid var(--line,rgba(255,255,255,0.10));
+  border-radius:8px; color:var(--fg,#eef0f8);
+  padding:5px 10px; font-size:13px; cursor:pointer;
+  backdrop-filter:blur(var(--glass-blur,12px));
+  -webkit-backdrop-filter:blur(var(--glass-blur,12px));
+}
+.brain-provider:focus{ outline:2px solid var(--accent,#8c7cf8); outline-offset:2px; }
+.brain-search{
+  width:100%; box-sizing:border-box;
+  background:var(--panel,rgba(255,255,255,0.05));
+  border:1px solid var(--line,rgba(255,255,255,0.10));
+  border-radius:10px; color:var(--fg,#eef0f8);
+  padding:10px 14px; font-size:14px;
+  backdrop-filter:blur(var(--glass-blur,12px));
+  -webkit-backdrop-filter:blur(var(--glass-blur,12px));
+  transition:border-color .16s ease;
+}
+.brain-search::placeholder{ color:var(--muted,#8d94a6); }
+.brain-search:focus{ outline:none; border-color:var(--accent,#8c7cf8); }
+.brain-cats{
+  display:flex; flex-wrap:wrap; gap:6px;
+}
+.brain-cat{
+  background:var(--panel,rgba(255,255,255,0.05));
+  border:1px solid var(--line,rgba(255,255,255,0.10));
+  border-radius:999px; color:var(--muted,#8d94a6);
+  padding:4px 13px; font-size:12px; cursor:pointer;
+  transition:background .15s ease, color .15s ease, border-color .15s ease;
+}
+.brain-cat:hover{ color:var(--fg,#eef0f8); border-color:var(--accent,#8c7cf8); }
+.brain-cat.active{
+  background:var(--accent,#8c7cf8); border-color:var(--accent,#8c7cf8);
+  color:#fff;
+}
+.brain-results{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:14px;
+}
+.brain-card{
+  padding:14px 16px; display:flex; flex-direction:column; gap:4px; cursor:default;
+  transition:transform .14s ease, box-shadow .14s ease;
+}
+.brain-card:hover{ transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,0,0,0.3); }
+.brain-card-title{
+  font-weight:600; font-size:14px; color:var(--fg,#eef0f8);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.brain-card-cat{
+  font-size:10px; letter-spacing:.07em; text-transform:uppercase;
+  color:var(--accent2,#52c8b4); margin-bottom:2px;
+}
+.brain-card-snippet{
+  font-size:13px; color:var(--muted,#8d94a6); margin:0;
+  display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;
+  line-height:1.5;
+}
+.brain-empty{
+  text-align:center; color:var(--muted,#8d94a6); font-size:14px;
+  padding:32px 0;
+}
+
+/* Brain-notes attribution chip — small outline badge on assistant messages
+   whose answer drew on external brain providers. Theme-agnostic. */
+.brain-chip{
+  display:inline-flex; align-items:center; gap:4px;
+  margin-top:6px; padding:1px 8px;
+  font-size:10px; line-height:1.6; letter-spacing:.02em;
+  color:var(--accent2,#52c8b4);
+  border:1px solid var(--line,rgba(255,255,255,0.10));
+  border-radius:999px; cursor:default; user-select:none;
+  background:transparent; opacity:.85;
+}
+.brain-chip:hover{ opacity:1; }

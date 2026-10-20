@@ -1,0 +1,50 @@
+id: reviewer_maintainability
+name: VERA-ReviewerMaintainability
+squad: quality
+role: reviewer
+mode: localized
+paid_usage_default: false
+activation_tokens:
+- maintainability
+- review
+local_protocol:
+  inspect_first: true
+  retrieve_second_brain: true
+  use_static_analysis: true
+  build_context_pack: true
+  use_local_llm: true
+  max_local_attempts: 3
+  verify_before_escalation: true
+model_policy:
+  default: local_reasoning
+  fallback: stronger_local
+  escalation: claude_code
+  api_allowed: false
+tools:
+  read:
+  - filesystem.read
+  - repo.search
+  - git.diff
+  write: []
+  execute: []
+approval_required:
+- git.push
+- deploy
+- delete_files
+- install_packages
+- database_migration
+- external_network
+security_required:
+- secret_scan
+- sast
+- dependency_scan
+- tests
+output_contract:
+- summary
+- changed_files
+- diff
+- tests_run
+- confidence_score
+- memory_updates
+- security_scan_summary
+source_prompt: reviewer_maintainability.md

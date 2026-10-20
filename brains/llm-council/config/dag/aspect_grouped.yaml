@@ -1,0 +1,118 @@
+# aspect_grouped.yaml — the seat graph.
+# Layers are DERIVED from the `consumes` edges (topological). Nodes with no
+# unmet dependency in a layer run in parallel (bounded by dag.concurrency).
+#
+#   triage -> {4 reviewers} -> {2 mid-overseers} -> chief
+#
+# Each seat references a LOGICAL model name (resolved via models.yaml), a lens/
+# stance, and a prompt file. Reviewers grouped under a mid-overseer via `group`.
+
+id: aspect_grouped
+description: "Aspect-grouped council: triage -> reviewers -> mid-overseers -> chief"
+
+seats:
+  - id: triage
+    role: triage
+    model_ref: triage
+    lens: routing
+    stance: classifier
+    prompt_path: triage.md
+    temperature: 0.0
+    consumes: []
+
+  - id: reviewer_correctness
+    role: reviewer
+    model_ref: reviewer.correctness
+    lens: correctness
+    stance: "logic & edge-case skeptic"
+    prompt_path: reviewer_correctness.md
+    temperature: 0.2
+    group: mid_a
+    consumes: [triage]
+
+  - id: reviewer_performance
+    role: reviewer
+    model_ref: reviewer.performance
+    lens: performance
+    stance: "efficiency / complexity hawk"
+    prompt_path: reviewer_performance.md
+    temperature: 0.2
+    group: mid_a
+    consumes: [triage]
+
+  - id: reviewer_security
+    role: reviewer
+    model_ref: reviewer.security
+    lens: security
+    stance: "adversarial red-teamer"
+    prompt_path: reviewer_security.md
+    temperature: 0.2
+    group: mid_b
+    consumes: [triage]
+
+  - id: reviewer_maintainability
+    role: reviewer
+    model_ref: reviewer.maintainability
+    lens: maintainability
+    stance: "readability / clarity advocate"
+    prompt_path: reviewer_maintainability.md
+    temperature: 0.2
+    group: mid_b
+    consumes: [triage]
+
+  - id: reviewer_clarity
+    role: reviewer
+    model_ref: reviewer.maintainability
+    lens: clarity
+    stance: "readability & naming advocate"
+    prompt_path: reviewer_clarity.md
+    temperature: 0.2
+    group: mid_b
+    consumes: [triage]
+
+  - id: reviewer_redundancy
+    role: reviewer
+    model_ref: reviewer.correctness
+    lens: redundancy
+    stance: "DRY / duplication / dead-code hunter"
+    prompt_path: reviewer_redundancy.md
+    temperature: 0.2
+    group: mid_a
+    consumes: [triage]
+
+  - id: reviewer_prompting
+    role: reviewer
+    model_ref: reviewer.security
+    lens: prompting
+    stance: "LLM-integration & prompt-safety reviewer"
+    prompt_path: reviewer_prompting.md
+    temperature: 0.2
+    group: mid_b
+    consumes: [triage]
+
+  - id: overseer_mid_a
+    role: mid_overseer
+    model_ref: overseer.mid_a
+    lens: "engineering quality"
+    stance: "pragmatic tech lead"
+    prompt_path: overseer_mid_a.md
+    temperature: 0.3
+    consumes: [reviewer_correctness, reviewer_performance, reviewer_redundancy]
+
+  - id: overseer_mid_b
+    role: mid_overseer
+    model_ref: overseer.mid_b
+    lens: "risk & hygiene"
+    stance: "risk-averse auditor"
+    prompt_path: overseer_mid_b.md
+    temperature: 0.3
+    consumes: [reviewer_security, reviewer_maintainability, reviewer_clarity, reviewer_prompting]
+
+  - id: overseer_chief
+    role: chief
+    model_ref: overseer.chief
+    lens: "final verdict"
+    stance: "decisive arbiter"
+    prompt_path: overseer_chief.md
+    temperature: 0.3
+    consumes: [overseer_mid_a, overseer_mid_b]

@@ -1,0 +1,28 @@
+# Direct production dependencies. Exact versions are the tested input to
+# requirements.txt; run scripts/lock_dependencies.py after deliberate updates.
+fastapi==0.141.1
+uvicorn==0.52.0
+python-multipart==0.0.32
+python-dotenv==1.2.2
+httpx==0.28.1
+pydantic==2.13.4
+pydantic-settings==2.14.2
+SQLAlchemy==2.0.51
+pypdf==6.16.2
+beautifulsoup4==4.15.0
+charset-normalizer==3.4.9
+numpy==2.4.6
+chromadb-client==1.5.9
+fastembed==0.8.0
+youtube-transcript-api==1.2.4
+markdown==3.10.2
+nh3==0.3.6
+icalendar==7.2.2
+python-dateutil==2.9.0.post0
+caldav==3.2.1
+cryptography==50.0.1
+bcrypt==5.0.0
+mcp==1.29.0
+pyotp==2.10.0
+qrcode[pil]==8.2
+croniter==6.2.4

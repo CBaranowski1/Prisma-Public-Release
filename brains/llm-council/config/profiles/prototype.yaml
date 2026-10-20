@@ -1,0 +1,34 @@
+# prototype.yaml — modest box (~32 GB RAM / 24 cores, no reliable GPU).
+# CPU Ollama, small models, bounded concurrency, RAM-guarded pool.
+
+backend:
+  kind: ollama
+  base_url: "http://localhost:11434"     # localhost only — no web egress
+  request_timeout_s: 600
+
+pool:
+  ram_budget_mb: 24000      # global budget shared across ALL seats/bots/users
+  vram_budget_mb: 0         # no reliable GPU on the prototype
+  max_loaded: 1             # ONE model resident at a time — safe on 12 GB
+  max_concurrent: 1         # one inference job at a time (no VRAM contention)
+
+dag:
+  concurrency: 4            # parallel seats (was 1=sequential). Raise toward production's 8 on a bigger GPU; lower if VRAM-bound.
+
+agents:
+  max_bots: 1              # cap on sub-agent fan-out
+
+timeouts:
+  seat_s: 180              # hard cap per seat (reasoning models are slow on CPU)
+  bot_s: 90                # hard cap per sub-agent bot
+
+queue:
+  max_workers: 2           # bounded request workers
+  max_queue: 50
+
+store:
+  kind: sqlite
+  url: "sqlite+aiosqlite:///./council.db"
+
+server:
+  host: "127.0.0.1"        # SECURITY: loopback only — pilot auth is anonymous, so do

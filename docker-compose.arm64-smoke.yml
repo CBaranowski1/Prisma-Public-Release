@@ -1,0 +1,29 @@
+# Minimal CPU stack pinned to linux/arm64 for the emulated bring-up smoke
+# (Plan 3d). Proves the prisma backend image runs on arm64 and reaches Chroma.
+services:
+  prisma:
+    build: .
+    platform: linux/arm64
+    ports:
+      - "127.0.0.1:7099:7000"
+    volumes:
+      - ./data-arm64-smoke:/app/data:z
+      - ./logs-arm64-smoke:/app/logs:z
+    environment:
+      - AUTH_ENABLED=true
+      - LOCALHOST_BYPASS=false
+      - CHROMADB_HOST=chromadb
+      - CHROMADB_PORT=8000
+      - DATABASE_URL=sqlite:///./data/app.db
+      - FASTEMBED_MODEL=sentence-transformers/all-MiniLM-L6-v2
+      - PUID=1000
+      - PGID=1000
+    depends_on:
+      - chromadb
+    restart: "no"
+  chromadb:
+    image: docker.io/chromadb/chroma:1.5.9  # pinned to match chromadb-client in venv; was :latest
+    platform: linux/arm64
+    environment:
+      - ANONYMIZED_TELEMETRY=FALSE
+    restart: "no"

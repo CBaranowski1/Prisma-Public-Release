@@ -1,0 +1,18 @@
+# App-command permission for the integrated Model IDE.
+#
+# The Prisma web UI is served by the local backend over http://localhost:7000,
+# which Tauri treats as a *remote* origin. App commands are auto-allowed for
+# local (tauri://) content but NOT for remote origins — those must be granted
+# explicitly. This permission grants access only to the workspace the user
+# selected in Prisma's native folder picker.
+[[permission]]
+identifier = "allow-ide-control"
+description = "Allow the Prisma UI to control the Model IDE and access the explicitly selected local workspace."
+commands.allow = [
+  "ide_get_workspace",
+  "ide_choose_workspace",
+  "ide_list_tree",
+  "ide_read_file",
+  "ide_stat_file",
+  "ide_write_file",
+]

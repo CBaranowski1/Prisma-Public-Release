@@ -1,0 +1,114 @@
+id: product_team
+description: 'Product & UX team: triage -> PM/UX/design/arch/analytics -> delivery & risk leads -> chief (shares memory pools)'
+seats:
+- id: triage
+  role: triage
+  model_ref: triage
+  lens: routing
+  stance: intake router
+  prompt_path: triage.md
+  temperature: 0.0
+  consumes: []
+- id: pt_pm
+  role: reviewer
+  model_ref: reviewer.maintainability
+  lens: product management
+  stance: product manager
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_a
+  consumes:
+  - triage
+- id: pt_ux
+  role: reviewer
+  model_ref: reviewer.maintainability
+  lens: user experience
+  stance: UX designer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_a
+  consumes:
+  - triage
+- id: pt_design
+  role: reviewer
+  model_ref: reviewer.maintainability
+  lens: interface design
+  stance: frontend/design specialist
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_a
+  consumes:
+  - triage
+- id: pt_arch
+  role: reviewer
+  model_ref: reviewer.correctness
+  lens: solution architecture
+  stance: software architect
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_b
+  consumes:
+  - triage
+- id: pt_analytics
+  role: reviewer
+  model_ref: reviewer.performance
+  lens: product analytics
+  stance: data/analytics specialist
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_b
+  consumes:
+  - triage
+- id: pt_ceo
+  role: reviewer
+  model_ref: reviewer.maintainability
+  lens: product strategy (CEO)
+  stance: product strategy (CEO) reviewer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_a
+  consumes:
+  - triage
+- id: pt_devex
+  role: reviewer
+  model_ref: reviewer.maintainability
+  lens: developer experience
+  stance: developer experience reviewer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_b
+  consumes:
+  - triage
+- id: pt_lead
+  role: mid_overseer
+  model_ref: overseer.mid_a
+  lens: delivery quality
+  stance: delivery lead
+  prompt_path: overseer_mid_a.md
+  temperature: 0.3
+  consumes:
+  - pt_pm
+  - pt_ux
+  - pt_design
+  - pt_ceo
+- id: pt_risk
+  role: mid_overseer
+  model_ref: overseer.mid_b
+  lens: product risk
+  stance: product-risk lead
+  prompt_path: overseer_mid_b.md
+  temperature: 0.3
+  consumes:
+  - pt_arch
+  - pt_analytics
+  - pt_devex
+- id: pt_chief
+  role: chief
+  model_ref: overseer.chief
+  lens: product verdict
+  stance: head of product
+  prompt_path: overseer_chief.md
+  temperature: 0.3
+  consumes:
+  - pt_lead
+  - pt_risk

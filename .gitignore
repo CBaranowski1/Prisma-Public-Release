@@ -1,0 +1,196 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+!static/js/editor/build/
+venv/
+.venv/
+*.egg
+
+# Environment and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.kdbx
+credentials.json
+secrets.json
+auth.json
+
+# Data — all user data stays local. The curated system-skill packages are
+# source assets, not user data, and must survive a clean checkout.
+/data/*
+!/data/skills/
+/data/skills/*
+!/data/skills/system/
+!/data/skills/system/**
+!services/hwfit/data/
+!services/hwfit/data/hf_models.json
+logs/
+*.log
+# Belt-and-suspenders explicit entry (already covered by *.log above) —
+# runtime search-engine error log, never committed (GRAY-INT-12).
+services/search_engine_error.log
+*.db
+*.sqlite
+*.sqlite3
+*.dump
+*.backup
+
+# Node
+node_modules/
+services/node_modules/
+services/data/
+
+# IDE / Editor
+.aider*
+.claude/*
+# Version-control the council/agent skills so a clean checkout reproduces the
+# "27 skills wired" claim (v2.0 VERIFY-05/07); everything else under .claude/ stays local.
+!.claude/skills/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Test capture artifacts (browser session dumps may contain personal content)
+.playwright-mcp/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+*.cache
+cache/
+output.txt.txt
+*.tar.gz
+*.tgz
+*.zip
+
+# Model weights and local inference caches. Store these on the Spark/NAS or in
+# an artifact registry, never in Git history.
+*.gguf
+*.safetensors
+*.ckpt
+*.pt
+*.pth
+*.onnx
+models/
+.cache/huggingface/
+
+# PyInstaller staged backend bundle (large build output; rebuilt via scripts/build-server.ps1)
+desktop/src-tauri/binaries/
+
+# Media (uploaded/generated)
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.bmp
+*.webp
+*.tiff
+*.pdf
+
+# Keep the original Prisma Desktop logo source used to generate the packaged
+# Tauri/Windows icon. Other generated or uploaded PNGs remain ignored.
+!desktop/src-tauri/icons/prisma-logo-source.png
+desktop/src-tauri/icons/android/
+desktop/src-tauri/icons/ios/
+desktop/src-tauri/icons/icon.icns
+
+# …except shipped demo assets in docs/ that the README links to.
+!docs/*.jpg
+!docs/*.jpeg
+!docs/*.png
+!docs/*.gif
+!docs/*.webp
+# …and curated docs/ subfolder assets (e.g. accessibility before/after shots).
+!docs/**/*.png
+!docs/**/*.jpg
+!docs/**/*.gif
+!docs/**/*.webp
+
+# Reports and temp files
+reports/
+tasks/
+scripts/compound/*.json
+research_data/
+**/search_analytics.json
+
+# Internal dev/review notes — not for public repo
+dev-docs/
+# Windows-port working docs (local only, not for public repo)
+docs/windows-port/
+
+# Local config
+compound.config.json
+*.error.log
+_scratch/
+.superpowers/
+
+# Baked brain galaxy data (large, machine-local — regenerate with tools/bake_brain_graph.py)
+brains/*/graph.json
+
+# Baked brain vector index (large, machine-local — regenerate with tools/index_brain.py)
+brains/*/index/
+
+# Recovered full council vault (115k+ local knowledge nodes). The migration
+# script and manifest are versioned; the personal/runtime corpus is not.
+brains/llm-council/vault/knowledge/
+
+# SuperIDE fork clones (separate git repos, machine-local; Path A = prismaIDE-pathA)
+prismaIDE/
+prismaIDE-pathA/
+
+# arm64 smoke scratch dirs (emulated boot test; data is ephemeral)
+/data-arm64-smoke/
+/logs-arm64-smoke/
+
+# Eval/benchmark artifacts (code_trainer harness inputs/outputs at repo root)
+/cc_*.jsonl
+/he_*.jsonl
+/mbpp_*.jsonl
+/code_*.jsonl
+/problems_*.jsonl
+/*.fails.json
+/test_results.txt
+/stdio
+
+# Tool caches
+.pytest_cache/
+.ruff_cache/
+.artifacts/
+
+# Brain session dumps (may contain personal content)
+brains/*/conversations/
+brains/*/vault/conversations/
+brains/*/vault/review-*.md
+
+# --- Large / regenerable artifacts (added for GitLab push) ---
+# Prebuilt vector index (~230 MB) - rebuild after clone with
+# "Fix Embeddings + Reindex.bat" instead of committing it.
+brains/*/index/
+*.npy
+# Embedding / vector caches
+**/fastembed_cache/
+**/memory_vectors/
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+
+# GSD Core dev framework (build-time methodology; not part of the app runtime)
+.gsd-core/
+# GSD working state
+.gsd/
+.plans/
+
+# Phase 41 screening resume cache (runtime artifact, not versioned)
+scripts/polyglot_ab/datasets/polyglot_screen_cache.jsonl

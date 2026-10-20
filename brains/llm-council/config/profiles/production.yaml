@@ -1,0 +1,43 @@
+# production.yaml — ~512 GB, likely multi-GPU server.
+# Same council/DAG; only knobs change. Swapping to this file requires NO edits
+# to orchestrator / dag / refinement / node-runners / consensus / SPA / Obsidian.
+
+backend:
+  kind: vllm
+  base_url: "http://localhost:8000/v1"   # OpenAI-compatible, localhost
+  request_timeout_s: 600
+  reasoning_parser: "deepseek_r1"        # exposes reasoning_content
+
+pool:
+  ram_budget_mb: 480000
+  vram_budget_mb: 320000                 # GPU VRAM; more models resident
+  max_loaded: 16
+  max_concurrent: 16
+
+dag:
+  concurrency: 8                         # full per-layer parallelism
+
+agents:
+  max_bots: 16
+
+timeouts:
+  seat_s: 90               # GPU is faster — tighter caps
+  bot_s: 45
+
+queue:
+  max_workers: 16
+  max_queue: 500
+  broker: "arq+redis"                    # deferred prod broker
+
+store:
+  kind: postgres
+  url: ""                                  # inject a deployment secret
+
+sandbox:
+  containerized: true                    # container boundary on prod
+
+server:
+  host: "127.0.0.1"        # SECURITY: loopback by default. For a real multi-user
+                           # server, put authenticated reverse-proxy / SSO in front
+                           # and set this explicitly — do not expose anonymous auth.
+  port: 8800

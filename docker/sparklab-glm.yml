@@ -1,0 +1,58 @@
+# Prisma integration for the host-native SparkLab engine.
+# SparkLab listens only on the Prisma Docker gateway, never on the LAN.
+services:
+  prisma:
+    extra_hosts: !override
+      - "host.docker.internal:172.18.0.1"
+    volumes:
+      # Local compatibility shim for GLM's smaller reliable tool-schema budget.
+      # Bind-mounting keeps the Second-Brain routing fix across recreates.
+      - /home/sparky/prisma/src/tool_index.py:/app/src/tool_index.py:ro
+      - /home/sparky/prisma/src/tool_implementations.py:/app/src/tool_implementations.py:ro
+      - /home/sparky/prisma/src/agent_loop.py:/app/src/agent_loop.py:ro
+      - /home/sparky/prisma/src/llm_core.py:/app/src/llm_core.py:ro
+      - /home/sparky/prisma/routes/chat_routes.py:/app/routes/chat_routes.py:ro
+      # Neural Brain UI + validated VERA profile injection.
+      - /home/sparky/prisma/routes/chat_helpers.py:/app/routes/chat_helpers.py:ro
+      - /home/sparky/prisma/routes/vera_agents_routes.py:/app/routes/vera_agents_routes.py:ro
+      - /home/sparky/prisma/routes/brain_routes.py:/app/routes/brain_routes.py:ro
+      - /home/sparky/prisma/src/request_models.py:/app/src/request_models.py:ro
+      - /home/sparky/prisma/static/index.html:/app/static/index.html:ro
+      - /home/sparky/prisma/static/app.js:/app/static/app.js:ro
+      - /home/sparky/prisma/static/sw.js:/app/static/sw.js:ro
+      - /home/sparky/prisma/static/css/shell.css:/app/static/css/shell.css:ro
+      - /home/sparky/prisma/static/js/brain.js:/app/static/js/brain.js:ro
+      - /home/sparky/prisma/static/js/chat.js:/app/static/js/chat.js:ro
+      - /home/sparky/prisma/static/js/brain-graph-overlay.js:/app/static/js/brain-graph-overlay.js:ro
+      - /home/sparky/prisma/static/js/brain-circuit.js:/app/static/js/brain-circuit.js:ro
+    environment:
+      DGX_SPARK_BASE_URL: http://host.docker.internal:1919/v1
+      DGX_SPARK_API_KEY: ""
+      DGX_SPARK_MODEL: dealignai/GLM-5.3-Flash-UNCENSORED-NVFP4
+      DGX_SPARK_MAX_MODEL_LEN: "32768"
+      DGX_SPARK_ALLOW_INSECURE_NO_AUTH: "true"
+      # SparkLab reports low, medium, high, and max for GLM-5.3. The compact
+      # composer intentionally exposes the requested Low/High quick choices.
+      DGX_SPARK_DEFAULT_REASONING_EFFORT: "high"
+      DGX_SPARK_DEFAULT_MAX_TOKENS: "1024"
+      # Keep multi-tool follow-up rounds inside SparkLab's live KV-cache
+      # headroom. Full tool events remain visible/persisted in Prisma; these
+      # limits apply only to the copy fed back into the local model.
+      DGX_SPARK_AGENT_ROUND_CONTEXT_TOKENS: "6000"
+      DGX_SPARK_TOOL_RESULT_CHAR_LIMIT: "2400"
+      # Docker Compose v5 did not retain the `chromadb` service alias on this
+      # named network. Use the stable container DNS name so vector memory and
+      # tool retrieval initialize instead of silently degrading to lexical mode.
+      CHROMADB_HOST: prisma-chromadb-1
+      # Keep automatic recall below SparkLab's sparse-prefill threshold. Users
+      # can still attach documents or request deeper context explicitly.
+      PRISMA_BRAIN_CONTEXT_CHARACTER_BUDGET: "400"
+      PRISMA_BRAIN_CONTEXT_TOP_K: "1"
+
+networks:
+  default:
+    name: prisma_default
+    ipam:
+      config:
+        - subnet: 172.18.0.0/16
+          gateway: 172.18.0.1

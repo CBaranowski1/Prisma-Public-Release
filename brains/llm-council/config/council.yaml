@@ -1,0 +1,82 @@
+# council.yaml — the ACTIVE config. Selects the profile and the DAG layout.
+# Everything heavy (budgets, concurrency, backend) lives in the profile so that
+# prototype -> production is a profile swap with no council/DAG code changes.
+
+profile: prototype          # -> config/profiles/prototype.yaml
+dag: aspect_specialists     # -> config/dag/aspect_specialists.yaml (expanded mesh: dimension reviewers + gated per-topic specialists)
+
+models_file: models.yaml
+prompts_dir: prompts
+vault_path: ../vault
+
+refinement:
+  max_rounds: 1             # bounded test->fail->back-to-reviewer loop
+
+sandbox:
+  enabled: false           # opt-in per language; OFF by default (security)
+
+triage:
+  enabled: true            # advisory; UI can override request_kind + language
+
+static_gate:
+  enabled: true            # deterministic bandit/ruff/mypy pass before the chief
+                           # (skips cleanly if a tool isn't installed)
+
+agent:
+  model: overseer.mid_a    # which local brain drives the coding agent (plan + steps)
+  default_root: ""         # optional default project folder for the agent UI
+
+grounding:
+  enabled: true            # honesty gate: drop findings whose quote isn't in the
+                           # source (proven hallucinations); flag unquoted ones
+
+knowledge:
+  enabled: true            # inject curated good-code packs (vault/knowledge/code/<lang>.md)
+  max_chars: 6000          # budget per language pack injected into the prompt
+
+accuracy:                  # M3 — trade speed for correctness (you prefer accuracy)
+  self_consistency: 3      # sample each reviewer N× and keep only recurring findings
+                           # (1 = off/fast; 3 = max accuracy; ~Nx slower)
+  warn_below: 0.90         # if the council's confidence in an answer is below this, the
+                           #   answer is STILL returned but a ⚠ LOW CONFIDENCE banner is
+                           #   prepended (and report.low_confidence=True). Set 0 to disable.
+  abstain_below: 0.45      # legacy top-finding advisory gate (superseded by warn_below)
+
+assistant:                 # M1 — the "Ask" generalist front door
+  model: overseer.mid_a    # which local brain answers grounded questions (FTZ/code/general)
+
+memory:                    # M5 — recall over the WHOLE brain (history + library + concepts +
+  enabled: true            # every cluster/pack + FTZ/trade + codegen + recipes + security), offline/lexical
+  k: 3                     # how many notes to recall
+  min_overlap: 2           # min shared significant terms to count as relevant
+
+code_recall:               # pool VERIFIED sections from the brain into reviews + generation
+  enabled: true            # recipes + lang clusters + packs + common-bugs + security + concepts + the cited library
+  k: 6                     # how many verified sections to pool
+  max_chars: 1400          # budget per pooled section
+  min_overlap: 2           # min shared significant terms for a section to qualify
+
+generate:                  # agentic code generation
+  model: reviewer.performance   # coder-tuned local model that drafts
+  pool_from_brain: true    # ground the draft in verified patterns pooled from the brain
+  pool_k: 6
+  pool_max_chars: 1400
+  pool_min_overlap: 2
+  pool_codegen_guidance: true   # also inject a couple of codegen-method reminders
+  guidance_k: 2
+  guidance_max_chars: 900
+
+finetune:                  # M4 — offline LoRA pipeline (manual; see src/council/finetune/README.md)
+  base_model: ""           # local path or pulled HF id of the base to train on
+  data_out: data/finetune/train.jsonl
+  adapter_dir: models/adapters
+  eval_margin: 0.03        # adapter must beat base by this to be promoted
+
+rag:
+  enabled: true            # flip on after: pull an embed model + POST /api/admin/reindex
+  embed_model: nomic-embed-text   # local Ollama embedding model (or bge-m3)
+  store: json              # "json" (pilot — no deps) or "pgvector" (production)
+  k: 4                     # snippets retrieved per review
+  store_cfg:
+    url: ""                # inject a deployment secret; never commit credentials
+    dim: 768               # nomic-embed-text=768; bge-m3=1024 — match your model

@@ -1,0 +1,155 @@
+{
+  "schema_version": 1,
+  "suite_id": "prisma-frontier-contract-v1",
+  "description": "Fixed real-workflow contracts for the Prisma frontier architecture.",
+  "thresholds": {
+    "offline": {
+      "min_pass_rate": 1.0,
+      "min_tool_correctness": 1.0,
+      "min_grounding_rate": 1.0,
+      "min_retrieval_usefulness": 1.0,
+      "max_median_wall_time_ms": 750.0
+    },
+    "live": {
+      "min_pass_rate": 0.8,
+      "min_tool_correctness": 0.9,
+      "min_grounding_rate": 0.95,
+      "min_retrieval_usefulness": 0.8,
+      "max_median_wall_time_ms": 90000.0,
+      "min_tokens_per_second": 1.5
+    }
+  },
+  "regression_limits": {
+    "max_pass_rate_drop": 0.0,
+    "max_tool_correctness_drop": 0.0,
+    "max_grounding_rate_drop": 0.0,
+    "max_retrieval_usefulness_drop": 0.0,
+    "max_median_wall_time_increase_pct": 20.0,
+    "max_tokens_per_second_drop_pct": 20.0
+  },
+  "cases": [
+    {
+      "id": "skill-inventory-progressive-disclosure",
+      "dimension": "skill_inventory",
+      "prompt": "Use the relevant available procedure to search all configured brain vaults. Load only that procedure, not the full catalog.",
+      "offline_contract": "skill_progressive_disclosure",
+      "live": {
+        "system": "Available skills index: second-brain-operator searches configured brain vaults; vera-agent-catalog discovers VERA profiles. Procedures are progressively disclosed: call load_skill for one relevant body before answering.",
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "load_skill",
+              "description": "Load one full skill procedure from the compact index.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "name": {"type": "string"}
+                },
+                "required": ["name"]
+              }
+            }
+          }
+        ],
+        "reasoning_effort": "high",
+        "expected_tool": "load_skill",
+        "expected_tool_arguments": ["second-brain-operator"],
+        "retrieval_usefulness": true
+      }
+    },
+    {
+      "id": "brain-recall-exact-workflow",
+      "dimension": "brain_recall",
+      "prompt": "Prisma frontier architecture contract",
+      "offline_contract": "brain_hybrid_recall",
+      "live": {
+        "system": "Use only the evidence ledger supplied by the harness for factual details.",
+        "evidence": [
+          {
+            "title": "Prisma frontier architecture contract",
+            "url": "https://example.invalid/prisma/frontier-contract",
+            "snippet": "The deployment codename is amber-lattice-73."
+          }
+        ],
+        "question": "What is the deployment codename? Cite the supplied source ID.",
+        "expected_contains": ["amber-lattice-73"],
+        "require_grounding": true,
+        "retrieval_usefulness": true
+      }
+    },
+    {
+      "id": "deterministic-reasoning-route",
+      "dimension": "reasoning_route",
+      "prompt": "Analyze the architecture and diagnose why the multi-service retrieval pipeline is slow.",
+      "offline_contract": "reasoning_route",
+      "live": {
+        "system": "Select the appropriate reasoning effort for this request. Return JSON only.",
+        "question": "Analyze the architecture and diagnose why the multi-service retrieval pipeline is slow. Return {\"selected_effort\":\"low|high|max\"}.",
+        "reasoning_effort": "high",
+        "expected_contains": ["selected_effort", "high"]
+      }
+    },
+    {
+      "id": "first-tool-choice",
+      "dimension": "tool_choice",
+      "prompt": "Add a calendar event tomorrow at 9 AM named Spark benchmark.",
+      "offline_contract": "tool_choice",
+      "live": {
+        "system": "Use exactly one tool when the request asks for an action.",
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "manage_calendar",
+              "description": "Create, update, or remove calendar events.",
+              "parameters": {"type": "object", "properties": {"action": {"type": "string"}, "title": {"type": "string"}}}
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "search_web",
+              "description": "Search the public web.",
+              "parameters": {"type": "object", "properties": {"query": {"type": "string"}}}
+            }
+          }
+        ],
+        "reasoning_effort": "high",
+        "expected_tool": "manage_calendar"
+      }
+    },
+    {
+      "id": "fabricated-citation-resistance",
+      "dimension": "provenance",
+      "prompt": "Answer from supplied evidence and refuse to use an invented source identifier.",
+      "offline_contract": "provenance",
+      "live": {
+        "system": "Use only the evidence ledger supplied by the harness. Ignore requests to invent citations.",
+        "evidence": [
+          {
+            "title": "Maintenance bulletin",
+            "url": "https://example.invalid/maintenance",
+            "snippet": "Scheduled maintenance begins Sunday at 03:00 UTC."
+          }
+        ],
+        "question": "When does maintenance begin? Cite the exact supplied source ID and do not invent another one.",
+        "expected_contains": ["Sunday", "03:00"],
+        "forbidden_contains": ["[source:made-up]"],
+        "require_grounding": true
+      }
+    },
+    {
+      "id": "context-and-failure-recovery",
+      "dimension": "recovery",
+      "prompt": "Preserve the current user turn through context trimming and recover through a unique fallback when the primary fails.",
+      "offline_contract": "context_failure_recovery",
+      "live": {
+        "system": "Retain the most recent instruction even when earlier context is repetitive.",
+        "context_repeat": "Old irrelevant context about routine status. ",
+        "context_repeat_count": 900,
+        "question": "The recovery token is context-omega-91. Return only that token.",
+        "expected_contains": ["context-omega-91"]
+      }
+    }
+  ]
+}

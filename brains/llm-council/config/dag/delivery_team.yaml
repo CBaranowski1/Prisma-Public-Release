@@ -1,0 +1,13 @@
+id: delivery_team
+description: "Delivery / release team (gstack Ship+Operate): release + devops + SRE + QA + resilience + security -> eng/risk leads -> chief"
+seats:
+  - {id: triage, role: triage, model_ref: triage, lens: routing, stance: "intake router", prompt_path: triage.md, temperature: 0.0, consumes: []}
+  - {id: dl_release, role: reviewer, model_ref: reviewer.correctness, lens: "release engineering", stance: "release / delivery engineer", prompt_path: reviewer_specialist.md, temperature: 0.2, group: mid_a, consumes: [triage]}
+  - {id: dl_devops, role: reviewer, model_ref: reviewer.performance, lens: "devops / deploy", stance: "DevOps engineer", prompt_path: reviewer_specialist.md, temperature: 0.2, group: mid_a, consumes: [triage]}
+  - {id: dl_sre, role: reviewer, model_ref: reviewer.performance, lens: "reliability / SRE", stance: "site-reliability engineer", prompt_path: reviewer_specialist.md, temperature: 0.2, group: mid_a, consumes: [triage]}
+  - {id: dl_qa, role: reviewer, model_ref: reviewer.correctness, lens: "QA", stance: "QA lead", prompt_path: reviewer_specialist.md, temperature: 0.2, group: mid_b, consumes: [triage]}
+  - {id: dl_resilience, role: reviewer, model_ref: reviewer.correctness, lens: "resilience", stance: "failure-mode / resilience reviewer", prompt_path: reviewer_specialist.md, temperature: 0.2, group: mid_b, consumes: [triage]}
+  - {id: dl_security, role: reviewer, model_ref: reviewer.security, lens: "ship-time security", stance: "release-security gate", prompt_path: reviewer_specialist.md, temperature: 0.2, group: mid_b, consumes: [triage]}
+  - {id: dl_lead, role: mid_overseer, model_ref: overseer.mid_a, lens: "delivery quality", stance: "release lead", prompt_path: overseer_mid_a.md, temperature: 0.3, consumes: [dl_release, dl_devops, dl_sre]}
+  - {id: dl_risk, role: mid_overseer, model_ref: overseer.mid_b, lens: "ship risk", stance: "release-risk lead", prompt_path: overseer_mid_b.md, temperature: 0.3, consumes: [dl_qa, dl_resilience, dl_security]}
+  - {id: dl_chief, role: chief, model_ref: overseer.chief, lens: "ship verdict", stance: "release manager", prompt_path: overseer_chief.md, temperature: 0.3, consumes: [dl_lead, dl_risk]}

@@ -1,0 +1,12 @@
+id: leadership_team
+description: "Leadership / strategy team (gstack Think+Plan): CEO + PM + architect + design + devex -> eng/risk leads -> chief"
+seats:
+  - {id: triage, role: triage, model_ref: triage, lens: routing, stance: "intake router", prompt_path: triage.md, temperature: 0.0, consumes: []}
+  - {id: ld_ceo, role: reviewer, model_ref: reviewer.maintainability, lens: "product strategy", stance: "founder / CEO 10-star product", prompt_path: reviewer_specialist.md, temperature: 0.3, group: mid_a, consumes: [triage]}
+  - {id: ld_pm, role: reviewer, model_ref: reviewer.maintainability, lens: "product management", stance: "product manager", prompt_path: reviewer_specialist.md, temperature: 0.2, group: mid_a, consumes: [triage]}
+  - {id: ld_arch, role: reviewer, model_ref: reviewer.correctness, lens: "architecture", stance: "eng-manager / architect", prompt_path: reviewer_specialist.md, temperature: 0.2, group: mid_a, consumes: [triage]}
+  - {id: ld_design, role: reviewer, model_ref: reviewer.maintainability, lens: "design & UX", stance: "senior designer", prompt_path: reviewer_specialist.md, temperature: 0.2, group: mid_b, consumes: [triage]}
+  - {id: ld_devex, role: reviewer, model_ref: reviewer.maintainability, lens: "developer experience", stance: "DevEx lead", prompt_path: reviewer_specialist.md, temperature: 0.2, group: mid_b, consumes: [triage]}
+  - {id: ld_lead, role: mid_overseer, model_ref: overseer.mid_a, lens: "strategy quality", stance: "head of product/eng", prompt_path: overseer_mid_a.md, temperature: 0.3, consumes: [ld_ceo, ld_pm, ld_arch]}
+  - {id: ld_risk, role: mid_overseer, model_ref: overseer.mid_b, lens: "experience risk", stance: "design/DX risk lead", prompt_path: overseer_mid_b.md, temperature: 0.3, consumes: [ld_design, ld_devex]}
+  - {id: ld_chief, role: chief, model_ref: overseer.chief, lens: "strategy verdict", stance: "CEO arbiter", prompt_path: overseer_chief.md, temperature: 0.3, consumes: [ld_lead, ld_risk]}

@@ -1,0 +1,16 @@
+id: sprint_team
+description: "gstack sprint pipeline: Think(CEO) Plan(arch+design) Build(backend) Review(staff) Test(QA) Ship(release) Reflect(retro) -> leads -> chief"
+seats:
+  - {id: triage, role: triage, model_ref: triage, lens: routing, stance: "intake router", prompt_path: triage.md, temperature: 0.0, consumes: []}
+  - {id: sp_ceo, role: reviewer, model_ref: reviewer.maintainability, lens: "think / strategy", stance: "CEO product framing", prompt_path: reviewer_specialist.md, temperature: 0.3, group: mid_a, consumes: [triage]}
+  - {id: sp_arch, role: reviewer, model_ref: reviewer.correctness, lens: "plan / architecture", stance: "eng-manager planning", prompt_path: reviewer_specialist.md, temperature: 0.2, group: mid_a, consumes: [triage]}
+  - {id: sp_design, role: reviewer, model_ref: reviewer.maintainability, lens: "plan / design", stance: "design reviewer", prompt_path: reviewer_specialist.md, temperature: 0.2, group: mid_a, consumes: [triage]}
+  - {id: sp_build, role: reviewer, model_ref: reviewer.correctness, lens: "build", stance: "implementation reviewer", prompt_path: reviewer_specialist.md, temperature: 0.2, group: mid_a, consumes: [triage]}
+  - {id: sp_review, role: reviewer, model_ref: reviewer.correctness, lens: "review / staff-eng", stance: "staff-engineer reviewer", prompt_path: reviewer_specialist.md, temperature: 0.2, group: mid_b, consumes: [triage]}
+  - {id: sp_qa, role: reviewer, model_ref: reviewer.correctness, lens: "test / QA", stance: "QA lead", prompt_path: reviewer_specialist.md, temperature: 0.2, group: mid_b, consumes: [triage]}
+  - {id: sp_security, role: reviewer, model_ref: reviewer.security, lens: "security / CSO", stance: "chief security officer", prompt_path: reviewer_specialist.md, temperature: 0.2, group: mid_b, consumes: [triage]}
+  - {id: sp_release, role: reviewer, model_ref: reviewer.correctness, lens: "ship / release", stance: "release engineer", prompt_path: reviewer_specialist.md, temperature: 0.2, group: mid_b, consumes: [triage]}
+  - {id: sp_retro, role: reviewer, model_ref: reviewer.maintainability, lens: "reflect / retro", stance: "retro lead", prompt_path: reviewer_specialist.md, temperature: 0.2, group: mid_b, consumes: [triage]}
+  - {id: sp_lead, role: mid_overseer, model_ref: overseer.mid_a, lens: "plan-build quality", stance: "delivery lead", prompt_path: overseer_mid_a.md, temperature: 0.3, consumes: [sp_ceo, sp_arch, sp_design, sp_build]}
+  - {id: sp_risk, role: mid_overseer, model_ref: overseer.mid_b, lens: "review-ship risk", stance: "quality-risk lead", prompt_path: overseer_mid_b.md, temperature: 0.3, consumes: [sp_review, sp_qa, sp_security, sp_release, sp_retro]}
+  - {id: sp_chief, role: chief, model_ref: overseer.chief, lens: "sprint verdict", stance: "engineering director", prompt_path: overseer_chief.md, temperature: 0.3, consumes: [sp_lead, sp_risk]}

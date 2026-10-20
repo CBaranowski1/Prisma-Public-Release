@@ -1,5 +1,8 @@
 # Prisma — Public architecture and execution topology
 
+> **Current branch:** single-user/no-login. `app.py` forces authentication off; the login and multi-user policy described in some legacy sections below is not active. Do not expose this service directly to the internet. See [runtime boundary](../PUBLIC-RUNTIME-NOTES.md).
+
+
 > **PUBLIC RELEASE / SANITIZED TECHNICAL MAP.** This documents verified source-level components, not private infrastructure. Private brain corpora, user memories, customer-specific specialist configurations, secrets, model weights, machine identifiers and internal planning are excluded. The functional source interfaces remain part of the proposed release.
 
 ## Application and database topology

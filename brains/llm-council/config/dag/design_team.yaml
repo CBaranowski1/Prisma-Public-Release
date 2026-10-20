@@ -1,0 +1,180 @@
+id: design_team
+description: 'App-building design team: triage -> disciplines -> leads -> director'
+seats:
+- id: triage
+  role: triage
+  model_ref: triage
+  lens: routing
+  stance: intake & discipline router
+  prompt_path: triage.md
+  temperature: 0.0
+  consumes: []
+- id: product_manager
+  role: reviewer
+  model_ref: reviewer.maintainability
+  lens: product management
+  stance: defines the problem, scope, and success criteria
+  prompt_path: reviewer_specialist.md
+  temperature: 0.3
+  group: mid_a
+  consumes:
+  - triage
+- id: ux_designer
+  role: reviewer
+  model_ref: reviewer.maintainability
+  lens: ux design
+  stance: designs the user experience and flows
+  prompt_path: reviewer_specialist.md
+  temperature: 0.3
+  group: mid_a
+  consumes:
+  - triage
+- id: solution_architect
+  role: reviewer
+  model_ref: reviewer.correctness
+  lens: solution architecture
+  stance: designs the system and chooses the stack
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_a
+  consumes:
+  - triage
+- id: frontend_engineer
+  role: reviewer
+  model_ref: reviewer.maintainability
+  lens: frontend engineering
+  stance: builds the UI
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_a
+  consumes:
+  - triage
+- id: backend_engineer
+  role: reviewer
+  model_ref: reviewer.correctness
+  lens: backend engineering
+  stance: builds the services, APIs, and data layer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_a
+  consumes:
+  - triage
+- id: mobile_engineer
+  role: reviewer
+  model_ref: reviewer.correctness
+  lens: mobile engineering
+  stance: builds the mobile apps
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_a
+  consumes:
+  - triage
+- id: data_engineer
+  role: reviewer
+  model_ref: reviewer.performance
+  lens: data engineering
+  stance: builds the data pipelines and storage
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_a
+  consumes:
+  - triage
+- id: devops_engineer
+  role: reviewer
+  model_ref: reviewer.security
+  lens: devops / infrastructure
+  stance: builds CI/CD, infrastructure, and deployment
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_b
+  consumes:
+  - triage
+- id: security_engineer
+  role: reviewer
+  model_ref: reviewer.security
+  lens: security engineering
+  stance: threat-models and secures the design
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_b
+  consumes:
+  - triage
+- id: qa_engineer
+  role: reviewer
+  model_ref: reviewer.correctness
+  lens: quality engineering
+  stance: designs the test strategy and automation
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_b
+  consumes:
+  - triage
+- id: tech_writer
+  role: reviewer
+  model_ref: reviewer.maintainability
+  lens: technical writing
+  stance: writes the docs and developer experience
+  prompt_path: reviewer_specialist.md
+  temperature: 0.3
+  group: mid_b
+  consumes:
+  - triage
+- id: ds_a11y
+  role: reviewer
+  model_ref: reviewer.maintainability
+  lens: accessibility (a11y)
+  stance: accessibility (a11y) reviewer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_b
+  consumes:
+  - triage
+- id: ds_observability
+  role: reviewer
+  model_ref: reviewer.performance
+  lens: observability
+  stance: observability reviewer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_a
+  consumes:
+  - triage
+- id: delivery_lead
+  role: mid_overseer
+  model_ref: overseer.mid_a
+  lens: delivery & engineering quality
+  stance: pragmatic delivery lead
+  prompt_path: overseer_mid_a.md
+  temperature: 0.3
+  consumes:
+  - product_manager
+  - ux_designer
+  - solution_architect
+  - frontend_engineer
+  - backend_engineer
+  - mobile_engineer
+  - data_engineer
+  - ds_observability
+- id: quality_lead
+  role: mid_overseer
+  model_ref: overseer.mid_b
+  lens: risk, security & quality
+  stance: risk-and-quality lead
+  prompt_path: overseer_mid_b.md
+  temperature: 0.3
+  consumes:
+  - devops_engineer
+  - security_engineer
+  - qa_engineer
+  - tech_writer
+  - ds_a11y
+- id: eng_director
+  role: chief
+  model_ref: overseer.chief
+  lens: final plan
+  stance: decisive engineering director
+  prompt_path: overseer_chief.md
+  temperature: 0.3
+  consumes:
+  - delivery_lead
+  - quality_lead

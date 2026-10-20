@@ -1,0 +1,316 @@
+/* shell.css — STRUCTURAL Prisma shell layout. Loaded for ALL themes.
+   Colors come from CSS variables (with fallbacks) so every theme recolors
+   the same geometry. Cosmetic/glass treatment lives in per-theme CSS. */
+
+:root{ --icon-rail-w: 0px; } /* legacy icon-rail removed; left gutter is sidebar-only */
+
+/* Mode switcher pill. */
+.mode-switch{
+  position:relative; align-self:center; margin:0 auto 12px;
+  display:inline-flex; padding:3px; gap:2px;
+  border-radius:12px; box-shadow:var(--shadow, 0 4px 16px rgba(0,0,0,0.25));
+}
+.mode-switch .mode-switch-thumb{ display:none; }
+.mode-opt{
+  position:relative; z-index:1; padding:5px 15px;
+  background:transparent; border:0; border-radius:9px;
+  color:var(--muted,#8d94a6); font-size:12px; font-weight:500; letter-spacing:0.01em;
+  cursor:pointer; transition:color .16s ease, background .16s ease;
+  font-family:inherit; -webkit-tap-highlight-color:transparent;
+}
+.mode-opt:hover{ color:var(--text,var(--fg)); }
+.mode-opt.active{
+  color:var(--fg);
+  background:color-mix(in srgb, var(--accent, var(--red)) 26%, transparent);
+}
+
+/* Floating composer hides legacy inline toggles (kept in DOM for handlers). */
+.chat-input-bar.floating-composer #web-toggle-btn,
+.chat-input-bar.floating-composer #bash-toggle-btn,
+.chat-input-bar.floating-composer #council-toggle-btn,
+.chat-input-bar.floating-composer .chat-input-right .mode-toggle{
+  display:none !important;
+}
+.overflow-menu-item.active{ color:var(--accent, var(--red)); }
+
+/* Per-turn reasoning control. This sits beside Send so the selected effort is
+   visible at the moment a prompt is submitted, rather than buried in Settings. */
+.reasoning-effort{
+  display:inline-flex; align-items:center; gap:2px; flex-shrink:0;
+  padding:2px; border:1px solid color-mix(in srgb,var(--border) 82%,transparent);
+  border-radius:9px; background:color-mix(in srgb,var(--bg) 74%,transparent);
+}
+.reasoning-effort-label{
+  padding:0 4px 0 6px; color:var(--muted,#8d94a6);
+  font:600 9px/1 ui-monospace,SFMono-Regular,Consolas,monospace;
+  letter-spacing:.04em; text-transform:uppercase;
+}
+.reasoning-effort-btn{
+  min-width:36px; height:24px; padding:0 7px; border:0; border-radius:7px;
+  background:transparent; color:var(--muted,#8d94a6); cursor:pointer;
+  font:600 10px/1 system-ui,sans-serif; transition:background .15s ease,color .15s ease,box-shadow .15s ease;
+}
+.reasoning-effort-btn:hover{ color:var(--fg); background:color-mix(in srgb,var(--fg) 7%,transparent); }
+.reasoning-effort-btn.active{
+  color:var(--fg); background:color-mix(in srgb,var(--accent,var(--red)) 24%,var(--panel));
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent,var(--red)) 38%,transparent);
+}
+.reasoning-effort-btn:focus-visible{ outline:2px solid var(--accent,var(--red)); outline-offset:1px; }
+
+/* View-pane layout: active panes flex, hidden panes leave layout. */
+.view-pane[data-view="brain"]{ flex:1; min-width:0; min-height:0; display:flex; overflow:auto; }
+.view-pane[data-view="brain"] #brain-view-root{ flex:1; min-width:0; }
+.view-pane[data-view="chat"]{ flex:1; min-width:0; min-height:0; display:flex; flex-direction:column; }
+.view-pane[hidden]{ display:none !important; }
+
+/* Floating sidebar toggle clears the 64px rail. */
+#hamburger-btn{ left:12px; top:10px; }
+
+@media (max-width:768px){
+  .mode-switch .mode-opt{ padding:5px 10px; font-size:11px; }
+  .reasoning-effort-label{ display:none; }
+  .reasoning-effort-btn{ min-width:34px; padding:0 6px; }
+}
+
+/* Dev role switcher in the sidebar user bar (revealed for real admins by init.js). */
+#adm-switcher{ display:flex; gap:6px; align-items:center; flex-wrap:wrap; padding:6px 8px; font-size:11px; }
+
+/* Settings → Tools launcher panel. */
+.settings-tools-intro{ opacity:0.7; font-size:13px; margin-bottom:12px; }
+.settings-tools-launchers{ display:flex; flex-direction:column; gap:8px; max-width:280px; }
+.settings-launch-btn{
+  display:flex; align-items:center; gap:8px; width:100%;
+  padding:10px 12px; border:1px solid var(--border); border-radius:8px;
+  background:var(--bg); color:var(--fg); font-size:13px; cursor:pointer;
+  text-align:left; transition:background 0.15s ease, border-color 0.15s ease;
+}
+.settings-launch-btn:hover{ background:var(--hover, rgba(255,255,255,0.06)); border-color:var(--accent, #8c7cf8); }
+
+/* Customizable sidebar: flat blocks ordered via CSS `order`. */
+#sidebar .sidebar-inner{ display:flex; flex-direction:column; }
+.sidebar-block{ /* order is set inline by applyLayout(); width stays full */ width:100%; }
+
+/* Settings -> Sidebar editor rows (drag to reorder). */
+.sb-edit-row{ display:flex; align-items:center; gap:8px; padding:6px 8px; border:1px solid var(--border); border-radius:8px; margin-bottom:6px; background:var(--bg); }
+.sb-edit-row[data-hidden="1"]{ opacity:0.55; }
+.sb-edit-label{ flex:1; font-size:13px; }
+.sb-edit-grip{ cursor:grab; opacity:0.5; font-size:15px; line-height:1; user-select:none; padding:0 2px; }
+.sb-edit-grip:active{ cursor:grabbing; }
+.sb-edit-row.dragging{ opacity:0.4; }
+.sb-edit-row.drop-before{ box-shadow: inset 0 2px 0 var(--accent, #8c7cf8); }
+.sb-edit-row.drop-after{ box-shadow: inset 0 -2px 0 var(--accent, #8c7cf8); }
+.sb-edit-note{ opacity:0.7; font-size:13px; line-height:1.5; padding:8px 2px; }
+
+/* Brain-graph overlay buttons — themed like the rest of Prisma. */
+.bg-btn{ display:inline-flex; align-items:center; gap:5px; cursor:pointer;
+  background:var(--panel); color:var(--fg); border:1px solid var(--border);
+  border-radius:8px; padding:5px 11px; font:12px system-ui,sans-serif;
+  transition:background .15s ease, border-color .15s ease; }
+.bg-btn:hover{ background:color-mix(in srgb, var(--accent) 16%, transparent); border-color:var(--accent); }
+.bg-btn:active{ transform:scale(0.96); }
+.bg-btn.active{ background:color-mix(in srgb, var(--accent) 24%, transparent); border-color:var(--accent); color:var(--fg); }
+
+/* Brain Graph — single top bar + progressive-disclosure panels. */
+.bg-graph-bar{ position:absolute; top:0; left:0; right:0; height:44px; display:flex; align-items:center; gap:10px;
+  padding:0 12px; background:var(--panel); border-bottom:1px solid var(--border); z-index:6;
+  font:13px system-ui,sans-serif; color:var(--fg); }
+.bg-graph-title{ display:inline-flex; align-items:center; gap:7px; font-weight:600; }
+.bg-graph-title svg{ opacity:.85; }
+.bg-graph-stat{ color:var(--muted, #8d94a6); font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.bg-btn-icon{ padding:5px 7px; }
+.bg-legend{ position:absolute; top:56px; right:12px; width:210px; max-height:calc(100% - 72px); overflow-y:auto;
+  z-index:5; background:color-mix(in srgb, var(--bg) 88%, transparent); border:1px solid var(--border);
+  border-radius:10px; padding:9px 11px; font:11px/1.6 system-ui,sans-serif; color:var(--fg);
+  box-shadow:var(--shadow, 0 8px 30px rgba(0,0,0,.4)); }
+.bg-legend[hidden]{ display:none; }
+.bg-controls{ position:absolute; left:12px; bottom:12px; z-index:5; max-width:240px;
+  background:color-mix(in srgb, var(--bg) 88%, transparent); border:1px solid var(--border); border-radius:9px;
+  color:var(--muted, #8d94a6); font:11px/1.6 system-ui,sans-serif; padding:6px 10px; user-select:none; }
+.bg-controls .bg-controls-keys{ display:none; margin-top:5px; color:var(--fg); }
+.bg-controls:hover .bg-controls-keys{ display:block; }
+.bg-controls b{ color:var(--fg); font-weight:600; }
+
+/* Brain tab — profiles are operational runtime selectors, not decorative tags. */
+.brain-view{ max-width:1180px; margin:0 auto; padding:24px clamp(16px,3vw,40px) 60px; }
+.brain-head{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:12px; }
+.brain-title{ margin:0; font-size:23px; letter-spacing:-.03em; }
+.brain-kicker{ margin-top:3px; color:var(--muted); font-size:12px; }
+.brain-provider{ margin-left:auto; min-width:220px; }
+.brain-runtime{ margin:14px 0; padding:16px; border:1px solid color-mix(in srgb,var(--accent) 24%,var(--border));
+  border-radius:14px; background:linear-gradient(145deg,color-mix(in srgb,var(--accent) 7%,var(--panel)),var(--panel)); }
+.brain-runtime-head{ display:flex; align-items:flex-start; justify-content:space-between; gap:14px; }
+.brain-runtime-head h3{ margin:0 0 4px; font-size:14px; }
+.brain-runtime-head p{ margin:0; max-width:720px; color:var(--muted); font-size:12px; line-height:1.45; }
+.brain-runtime-count{ color:var(--accent); font:11px/1.4 ui-monospace,SFMono-Regular,Consolas,monospace; white-space:nowrap; }
+.brain-agent-active{ display:flex; align-items:center; gap:10px; margin:12px 0; padding:9px 10px;
+  border:1px solid color-mix(in srgb,#67e8f9 46%,var(--border)); border-radius:10px;
+  background:color-mix(in srgb,#22d3ee 8%,transparent); }
+.brain-agent-pulse{ width:9px; height:9px; flex:0 0 auto; border-radius:50%; background:#67e8f9;
+  box-shadow:0 0 0 0 rgba(103,232,249,.5); animation:brainPulse 1.8s ease-out infinite; }
+.brain-agent-active-copy{ display:flex; flex:1; min-width:0; flex-direction:column; }
+.brain-agent-active-copy strong{ font-size:12px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.brain-agent-active-copy span{ color:var(--muted); font-size:10px; }
+.brain-agent-action{ border:1px solid var(--border); border-radius:7px; padding:5px 8px; background:var(--bg); color:var(--fg); cursor:pointer; font-size:11px; }
+.brain-agent-action:hover{ border-color:var(--accent); }
+.brain-agent-list{ display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:7px; max-height:300px; overflow:auto; margin-top:9px; padding-right:3px; }
+.brain-agent-card{ display:flex; flex-direction:column; gap:3px; min-width:0; padding:9px 10px; text-align:left; cursor:pointer;
+  border:1px solid var(--border); border-radius:9px; background:color-mix(in srgb,var(--bg) 78%,transparent); color:var(--fg); }
+.brain-agent-card:hover{ border-color:color-mix(in srgb,var(--accent) 64%,var(--border)); transform:translateY(-1px); }
+.brain-agent-card.active{ border-color:#67e8f9; background:color-mix(in srgb,#22d3ee 12%,var(--panel)); box-shadow:0 0 22px rgba(34,211,238,.12); }
+.brain-agent-card-top{ display:flex; align-items:center; gap:8px; min-width:0; }
+.brain-agent-card-top strong{ flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:11px; }
+.brain-agent-card-top em{ color:var(--accent); font:9px ui-monospace,SFMono-Regular,Consolas,monospace; font-style:normal; text-transform:uppercase; }
+.brain-agent-card-meta,.brain-agent-card-tokens{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--muted); font-size:9px; }
+.brain-agent-card-tokens{ color:color-mix(in srgb,var(--fg) 66%,transparent); }
+.brain-agent-none{ padding:12px; color:var(--muted); font-size:12px; }
+.brain-card-interactive{ cursor:pointer; transition:border-color .16s ease,transform .16s ease,box-shadow .16s ease; }
+.brain-card-interactive:hover,.brain-card-interactive:focus-visible{ border-color:color-mix(in srgb,var(--accent) 68%,var(--border)); transform:translateY(-1px); outline:none; }
+.brain-card-interactive.active{ border-color:#67e8f9; box-shadow:0 0 22px rgba(34,211,238,.12); }
+.brain-card-action{ display:inline-flex; width:max-content; margin-top:8px; padding:4px 7px; border:1px solid color-mix(in srgb,var(--accent) 44%,var(--border));
+  border-radius:999px; color:var(--accent); font:9px/1.2 ui-monospace,SFMono-Regular,Consolas,monospace; text-transform:uppercase; letter-spacing:.06em; }
+
+/* Attribution-inspired context circuit. It visualizes Prisma's real routing,
+   selected VERA profile, and knowledge associations—not hidden model CoT. */
+.bg-mode-tabs{ display:flex; gap:4px; padding:3px; border:1px solid var(--border); border-radius:10px; background:var(--bg); }
+.bg-mode-tabs .bg-btn{ border:0; padding:3px 9px; background:transparent; }
+.brain-circuit{ position:absolute; inset:0; overflow:hidden; color:#e7eefb;
+  background:radial-gradient(circle at 52% 46%,rgba(31,79,109,.22),transparent 32%),linear-gradient(180deg,#05070b,#080b12); }
+.bc-board{ position:absolute; inset:0; overflow:auto; }
+.bc-svg{ width:100%; min-width:1060px; height:100%; min-height:670px; display:block; }
+.bc-grid{ opacity:.22; }
+.bc-layer-label{ fill:#7f8da4; font:600 10px ui-monospace,SFMono-Regular,Consolas,monospace; letter-spacing:.16em; text-transform:uppercase; }
+.bc-edge{ fill:none; stroke:#38506b; stroke-width:1.15; opacity:.46; }
+.bc-edge.active{ stroke:#67e8f9; stroke-width:2.2; opacity:.98; stroke-dasharray:8 5; animation:bcFlow 1.2s linear infinite; filter:drop-shadow(0 0 5px rgba(103,232,249,.7)); }
+.bc-edge.review{ stroke:#c084fc; }
+.bc-node{ cursor:pointer; outline:none; }
+.bc-node rect{ fill:#101722; stroke:#334155; stroke-width:1; rx:8; transition:fill .14s ease,stroke .14s ease; }
+.bc-node:hover rect,.bc-node:focus rect{ fill:#162234; stroke:#7dd3fc; }
+.bc-node.active rect{ fill:#10313a; stroke:#67e8f9; stroke-width:1.8; filter:drop-shadow(0 0 9px rgba(34,211,238,.45)); }
+.bc-node.router rect{ fill:#20152d; stroke:#a855f7; }
+.bc-node.memory rect{ fill:#15251f; stroke:#34d399; }
+.bc-node.synthesis rect{ fill:#251d12; stroke:#fbbf24; }
+.bc-node-title{ fill:#eef6ff; font:600 11px system-ui,sans-serif; pointer-events:none; }
+.bc-node-meta{ fill:#8190a5; font:9px ui-monospace,SFMono-Regular,Consolas,monospace; pointer-events:none; }
+.bc-node-dot{ fill:#64748b; pointer-events:none; }
+.bc-node.active .bc-node-dot{ fill:#67e8f9; animation:brainPulse 1.8s ease-out infinite; }
+.bc-topline{ position:absolute; top:16px; left:18px; z-index:3; pointer-events:none; }
+.bc-topline strong{ display:block; font-size:14px; letter-spacing:-.01em; }
+.bc-topline span{ display:block; max-width:520px; margin-top:4px; color:#8290a4; font-size:10px; line-height:1.45; }
+.bc-search{ position:absolute; top:16px; right:18px; z-index:4; width:250px; padding:7px 10px; border:1px solid #334155;
+  border-radius:8px; background:rgba(8,11,18,.88); color:#eef6ff; font:11px system-ui,sans-serif; outline:none; }
+.bc-search:focus{ border-color:#67e8f9; }
+.bc-inspector{ position:absolute; right:18px; bottom:18px; z-index:4; width:min(340px,calc(100% - 36px)); max-height:44%; overflow:auto;
+  padding:13px; border:1px solid #334155; border-radius:12px; background:rgba(9,13,21,.94); box-shadow:0 18px 60px rgba(0,0,0,.45); }
+.bc-inspector[hidden]{ display:none; }
+.bc-inspector h3{ margin:0 0 5px; font-size:13px; }
+.bc-inspector p{ margin:4px 0; color:#92a2b8; font-size:10px; line-height:1.5; }
+.bc-inspector-tags{ display:flex; flex-wrap:wrap; gap:5px; margin:9px 0; }
+.bc-inspector-tags span{ padding:3px 6px; border:1px solid #334155; border-radius:999px; color:#a9bad1; font:9px ui-monospace,SFMono-Regular,Consolas,monospace; }
+.bc-inspector button{ border:1px solid #3f6078; border-radius:7px; padding:6px 9px; cursor:pointer; background:#11222d; color:#dff8ff; font:11px system-ui,sans-serif; }
+.bc-inspector button.active{ border-color:#f87171; background:#2c171b; color:#fecaca; }
+.bc-metrics{ position:absolute; left:18px; bottom:18px; z-index:4; width:300px; padding:12px;
+  border:1px solid #2c4058; border-radius:12px; background:rgba(8,13,21,.93); box-shadow:0 16px 50px rgba(0,0,0,.34); }
+.bc-metrics-head{ display:flex; align-items:center; gap:7px; margin-bottom:9px; color:#9db0c8; font:600 9px ui-monospace,SFMono-Regular,Consolas,monospace; letter-spacing:.13em; }
+.bc-live-dot{ width:7px; height:7px; border-radius:50%; background:#64748b; box-shadow:0 0 0 3px rgba(100,116,139,.13); }
+.bc-live-dot.running{ background:#34d399; box-shadow:0 0 0 3px rgba(52,211,153,.13),0 0 14px rgba(52,211,153,.8); animation:brainPulse 1.4s ease-out infinite; }
+.bc-metrics-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px 5px; }
+.bc-metrics-grid div{ min-width:0; }
+.bc-metrics-grid b{ display:block; overflow:hidden; text-overflow:ellipsis; color:#eaf3ff; font:600 11px ui-monospace,SFMono-Regular,Consolas,monospace; white-space:nowrap; }
+.bc-metrics-grid span{ display:block; margin-top:2px; color:#6f8097; font:8px ui-monospace,SFMono-Regular,Consolas,monospace; text-transform:uppercase; }
+.bc-feedback{ display:flex; align-items:center; gap:5px; margin-top:10px; padding-top:9px; border-top:1px solid #223247; }
+.bc-feedback>span{ flex:1; color:#8191a7; font-size:9px; }
+.bc-feedback button{ padding:4px 7px; border:1px solid #334155; border-radius:6px; background:#101824; color:#9fb0c7; cursor:pointer; font-size:9px; }
+.bc-feedback button:hover,.bc-feedback button.active{ border-color:#67e8f9; color:#dffbff; }
+.bc-feedback button.active.helpful{ border-color:#34d399; color:#a7f3d0; background:#10271f; }
+.bc-feedback button.active.missed{ border-color:#fb7185; color:#fecdd3; background:#2a151b; }
+.bc-timeline{ position:absolute; left:338px; right:378px; bottom:18px; z-index:3; display:flex; align-items:center; gap:6px; min-height:52px;
+  padding:9px 10px; overflow-x:auto; border:1px solid #23354a; border-radius:12px; background:rgba(8,13,21,.88); scrollbar-width:thin; }
+.bc-timeline-title{ flex:0 0 auto; color:#617187; font:600 8px ui-monospace,SFMono-Regular,Consolas,monospace; letter-spacing:.12em; writing-mode:vertical-rl; transform:rotate(180deg); }
+.bc-run-chip{ flex:0 0 145px; display:grid; grid-template-columns:8px 1fr; gap:1px 6px; padding:6px 7px; text-align:left; cursor:pointer;
+  border:1px solid #27384c; border-radius:8px; background:#0d1520; color:#a8b7ca; }
+.bc-run-chip:hover,.bc-run-chip.active{ border-color:#4a7897; background:#122130; }
+.bc-run-chip i{ grid-row:1/3; align-self:center; width:6px; height:6px; border-radius:50%; background:#64748b; }
+.bc-run-chip i.running{ background:#34d399; box-shadow:0 0 9px rgba(52,211,153,.8); }
+.bc-run-chip i.helpful{ background:#34d399; }.bc-run-chip i.missed{ background:#fb7185; }
+.bc-run-chip span{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:9px; }
+.bc-run-chip time{ color:#65768c; font:8px ui-monospace,SFMono-Regular,Consolas,monospace; }
+@keyframes bcFlow{ to{ stroke-dashoffset:-26; } }
+@keyframes brainPulse{ 70%{ box-shadow:0 0 0 8px rgba(103,232,249,0); } 100%{ box-shadow:0 0 0 0 rgba(103,232,249,0); } }
+@media (max-width:760px){
+  .brain-provider{ order:3; width:100%; margin-left:0; }
+  .brain-runtime-head{ flex-direction:column; }
+  .brain-agent-list{ grid-template-columns:1fr; max-height:260px; }
+  .brain-agent-active{ flex-wrap:wrap; }
+  .bg-graph-stat{ display:none; }
+  .bg-graph-bar{ gap:5px; padding:0 7px; }
+  .bg-graph-title{ display:none; }
+  .bg-btn{ padding:5px 7px; }
+  .bc-search{ top:12px; right:12px; left:12px; width:auto; }
+  .bc-topline{ top:54px; left:13px; }
+  .bc-metrics{ left:12px; right:12px; bottom:12px; width:auto; }
+  .bc-timeline{ display:none; }
+  .bc-inspector{ right:12px; left:12px; bottom:12px; width:auto; max-height:48%; z-index:6; }
+}
+@media (prefers-reduced-motion:reduce){ .brain-agent-pulse,.bc-edge.active,.bc-node.active .bc-node-dot{ animation:none; } }
+
+/* Sidebar header logo — gradient stops are coloured from CSS (not SVG
+   presentation attributes, where var() does not resolve) so they follow the
+   active theme's accent (`--red`, the var theme.js actually sets). */
+.sidebar-brand{ display:flex; align-items:center; gap:10px; }
+.sidebar-brand-logo{ width:22px; height:22px; flex-shrink:0; display:inline-flex; }
+.sidebar-brand-logo svg{ width:100%; height:100%; transform:translateY(-1px); }
+/* Both the header mark and the welcome-screen mark share these themed stops. */
+#sidebarprismg .sg-a, #prismg .sg-a{ stop-color:var(--red, var(--accent, #8c7cf8)); }
+#sidebarprismg .sg-b, #prismg .sg-b{ stop-color:color-mix(in srgb, var(--red, var(--accent, #8c7cf8)) 55%, var(--fg, #ffffff)); }
+
+/* ── Display size (UI scale) — whole-UI zoom for accessibility ──
+   `zoom` scales the entire box model (text + px sizes + icons) like browser
+   zoom — the only way to make EVERYTHING bigger without a px→rem refactor.
+   --ui-zoom is set on <html> by uiScale.js / the head first-paint script.
+   The graph maps clicks rect-relative, so zoom is transparent to it. */
+body{ zoom: var(--ui-zoom, 1); }
+
+/* Settings → Appearance → Display size controls. */
+.display-size-presets{ display:flex; gap:8px; flex-wrap:wrap; margin:6px 0 12px; }
+.display-size-btn{ padding:7px 14px; border:1px solid var(--border); border-radius:8px;
+  background:var(--bg); color:var(--fg); font:13px system-ui,sans-serif; cursor:pointer;
+  transition:background .15s ease, border-color .15s ease; }
+.display-size-btn:hover{ border-color:var(--accent, var(--red)); }
+.display-size-btn.active{ background:color-mix(in srgb, var(--accent, var(--red)) 22%, transparent);
+  border-color:var(--accent, var(--red)); font-weight:600; }
+.display-size-slider-row{ display:flex; align-items:center; gap:12px; max-width:380px; margin-bottom:4px; }
+.display-size-slider-row input[type=range]{ flex:1; accent-color:var(--accent, var(--red)); cursor:pointer; }
+.display-size-value{ min-width:46px; text-align:right; font:13px system-ui,sans-serif;
+  color:var(--muted, var(--fg)); font-variant-numeric:tabular-nums; }
+
+/* IDE sidebar tab — status dot appended to the label span */
+#sidebar-ide-btn.ide-btn--online .grow::after {
+  content: ' \25CF';
+  color: var(--accent-primary, #98c379);
+  font-size: 0.6em;
+  vertical-align: middle;
+}
+#sidebar-ide-btn.ide-btn--offline .grow::after {
+  content: ' \25CB';
+  color: var(--border, #555);
+  font-size: 0.6em;
+  vertical-align: middle;
+}
+
+/* "Open in IDE" button — appended to assistant message bubbles when the
+   backend emits an ide_open_hint chunk referencing a file path. */
+.open-in-ide-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 6px;
+  padding: 3px 8px;
+  font-size: 0.78em;
+  color: var(--fg);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+  opacity: 0.8;
+}
+.open-in-ide-btn:hover { opacity: 1; border-color: var(--accent-primary, #98c379); }

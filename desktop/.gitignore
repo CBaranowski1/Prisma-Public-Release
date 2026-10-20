@@ -1,0 +1,8 @@
+node_modules/
+src-tauri/target/
+src-tauri/gen/
+
+# The static placeholder frontend IS tracked (overrides the root `dist/` ignore).
+# The real UI is served by the spawned backend; main.rs opens the window there.
+!dist/
+!dist/index.html

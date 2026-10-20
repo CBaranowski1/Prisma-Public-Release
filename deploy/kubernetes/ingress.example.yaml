@@ -1,0 +1,13 @@
+# Intentionally not a deployable Kubernetes resource.
+#
+# Prisma Desktop currently runs with AUTH_ENABLED=false because the login
+# surface was removed for the single-user desktop product. Publishing that
+# process through an Ingress would expose every chat, brain note, code workspace,
+# and data-source management endpoint without authentication.
+#
+# Keep the ClusterIP service private and use:
+#   kubectl -n prisma port-forward service/prisma 7000:80
+#
+# A future network deployment must first restore and test authentication,
+# change deploy/kubernetes/configmap.yaml to AUTH_ENABLED=true, restrict
+# ALLOWED_ORIGINS, and add an authenticated TLS ingress in a separate overlay.

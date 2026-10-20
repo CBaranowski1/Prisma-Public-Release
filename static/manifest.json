@@ -1,0 +1,14 @@
+{
+  "name": "Prisma",
+  "short_name": "Prisma",
+  "description": "Self-hosted AI chat with memory, documents, and tools",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0c0e16",
+  "theme_color": "#0c0e16",
+  "icons": [
+    { "src": "/static/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

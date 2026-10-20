@@ -1,0 +1,12 @@
+id: ml_team
+description: "ML / AI engineering team: triage -> ml/data/eval/ops/safety -> eng & risk leads -> chief (shares memory pools)"
+seats:
+  - {id: triage, role: triage, model_ref: triage, lens: routing, stance: "intake router", prompt_path: triage.md, temperature: 0.0, consumes: []}
+  - {id: ml_eng, role: reviewer, model_ref: reviewer.correctness, lens: "ML engineering", stance: "machine-learning engineer", prompt_path: reviewer_specialist.md, temperature: 0.2, group: mid_a, consumes: [triage]}
+  - {id: ml_data, role: reviewer, model_ref: reviewer.performance, lens: "data engineering", stance: "data engineer", prompt_path: reviewer_specialist.md, temperature: 0.2, group: mid_a, consumes: [triage]}
+  - {id: ml_eval, role: reviewer, model_ref: reviewer.correctness, lens: "model evaluation", stance: "ML evaluation/QA specialist", prompt_path: reviewer_specialist.md, temperature: 0.2, group: mid_a, consumes: [triage]}
+  - {id: ml_ops, role: reviewer, model_ref: reviewer.performance, lens: "MLOps", stance: "MLOps/observability engineer", prompt_path: reviewer_specialist.md, temperature: 0.2, group: mid_b, consumes: [triage]}
+  - {id: ml_safety, role: reviewer, model_ref: reviewer.security, lens: "model safety", stance: "AI-safety/security engineer", prompt_path: reviewer_specialist.md, temperature: 0.2, group: mid_b, consumes: [triage]}
+  - {id: ml_lead, role: mid_overseer, model_ref: overseer.mid_a, lens: "ml quality", stance: "ML eng lead", prompt_path: overseer_mid_a.md, temperature: 0.3, consumes: [ml_eng, ml_data, ml_eval]}
+  - {id: ml_risk, role: mid_overseer, model_ref: overseer.mid_b, lens: "ml risk", stance: "ML-risk lead", prompt_path: overseer_mid_b.md, temperature: 0.3, consumes: [ml_ops, ml_safety]}
+  - {id: ml_chief, role: chief, model_ref: overseer.chief, lens: "ml verdict", stance: "head of ML", prompt_path: overseer_chief.md, temperature: 0.3, consumes: [ml_lead, ml_risk]}

@@ -1,0 +1,3 @@
+# The private Spark deployment has one explicit owner. Combined with main
+# branch protection, changes cannot bypass owner review.
+* @CBaranowski1

@@ -1,0 +1,107 @@
+# Co-located NVIDIA DGX Spark overlay.
+#
+# Run from the repository root:
+#   docker compose -f docker-compose.yml -f docker/dgx-spark.yml up -d --build
+#
+# The base file supplies Prisma, ChromaDB, SearXNG, and ntfy. This overlay adds
+# authenticated vLLM and points Prisma at it through Docker's private project
+# network. vLLM is deliberately not published on a host port in this mode.
+services:
+  prisma:
+    environment:
+      DGX_SPARK_BASE_URL: http://vllm:8000/v1
+      DGX_SPARK_API_KEY: ${DGX_API_KEY:?Set DGX_API_KEY to a long random secret}
+      DGX_SPARK_MODEL: ${DGX_MODEL:?Set DGX_MODEL to a supported Hugging Face model handle}
+      DGX_SPARK_MAX_MODEL_LEN: ${DGX_MAX_MODEL_LEN:-32768}
+      DGX_SPARK_ALLOW_INSECURE_NO_AUTH: "false"
+    depends_on:
+      vllm:
+        condition: service_healthy
+
+  vllm:
+    image: ${DGX_VLLM_IMAGE:-vllm/vllm-openai@sha256:ffb2d59b1c059a5bd8d781320c9f5189de8293693b7d95da54befddaa54abf52}
+    user: "${DGX_UID:-1000}:${DGX_GID:-1000}"
+    init: true
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    shm_size: 16gb
+    tmpfs:
+      - /tmp:size=8g,mode=1777
+      # Triton JIT-loads CUDA helper .so files from HOME; this isolated mount
+      # must therefore be executable even though the container stays read-only.
+      - /tmp/vllm-home:size=1g,mode=0700,uid=${DGX_UID:-1000},gid=${DGX_GID:-1000},exec
+    volumes:
+      - ${DGX_HF_CACHE:-./deploy/dgx-spark/cache}:/cache/huggingface
+    environment:
+      HOME: /tmp/vllm-home
+      USER: vllm
+      LOGNAME: vllm
+      XDG_CACHE_HOME: /tmp/vllm-home/.cache
+      TORCHINDUCTOR_CACHE_DIR: /tmp/torchinductor
+      HF_HOME: /cache/huggingface
+      HF_HUB_OFFLINE: ${HF_HUB_OFFLINE:-0}
+    expose:
+      - "8000"
+    command:
+      - ${DGX_MODEL:?Set DGX_MODEL to a supported Hugging Face model handle}
+      - --revision
+      - ${DGX_MODEL_REVISION:?Set DGX_MODEL_REVISION to the full Hugging Face commit SHA}
+      - --host
+      - "0.0.0.0"
+      - --port
+      - "8000"
+      - --tensor-parallel-size
+      - "1"
+      - --trust-remote-code
+      - --kv-cache-dtype
+      - fp8
+      - --attention-backend
+      - flashinfer
+      - --moe-backend
+      - marlin
+      - --gpu-memory-utilization
+      # DGX Spark uses unified CPU/GPU memory. Keep the default deliberately
+      # conservative; operators can raise it explicitly after measuring.
+      - ${DGX_GPU_MEMORY_UTILIZATION:-0.30}
+      - --max-model-len
+      - ${DGX_MAX_MODEL_LEN:-32768}
+      - --max-num-seqs
+      - ${DGX_MAX_NUM_SEQS:-2}
+      - --max-num-batched-tokens
+      - ${DGX_MAX_NUM_BATCHED_TOKENS:-4096}
+      - --enable-chunked-prefill
+      - --async-scheduling
+      - --enable-prefix-caching
+      - --speculative-config
+      - '{"method":"mtp","num_speculative_tokens":3,"moe_backend":"triton"}'
+      - --load-format
+      - fastsafetensors
+      - --reasoning-parser
+      - qwen3
+      - --tool-call-parser
+      - qwen3_xml
+      - --enable-auto-tool-choice
+      - --api-key
+      - ${DGX_API_KEY:?Set DGX_API_KEY to a long random secret}
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities:
+                - gpu
+    healthcheck:
+      test:
+        - CMD
+        - python3
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"
+      interval: 30s
+      timeout: 5s
+      start_period: 15m
+      retries: 5
+    restart: unless-stopped

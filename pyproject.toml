@@ -1,0 +1,62 @@
+# Direct runtime dependencies are maintained in requirements.in and compiled
+# into the hash-locked requirements.txt used by Docker/raw pip. Development and
+# evaluation tools live in the separate requirements-dev lock. fastembed is a
+# core dependency for brain embedding recall (BRAIN-01, D-06), not an extra.
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.ruff]
+extend-exclude = [
+    "venv",
+    "node_modules",
+    "data",
+    "desktop",
+    "ollama",
+]
+
+[tool.ruff.lint]
+select = ["E4", "E9", "F"]
+
+[tool.ruff.lint.per-file-ignores]
+"app.py" = ["E402"]
+"src/database.py" = ["F401"]
+"src/constants.py" = ["F401", "F403"]
+"core/__init__.py" = ["F401", "F403", "F405"]
+"core/auth.py" = ["E402"]
+"core/database.py" = ["E402"]
+"core/platform_compat.py" = ["F401"]
+"mcp_servers/email_server.py" = ["F401", "F841"]
+"routes/brain_graph_routes.py" = ["F601"]
+"routes/calendar_routes.py" = ["E402", "F401", "F811"]
+"routes/contacts_routes.py" = ["F401"]
+"routes/cookbook_routes.py" = ["E402"]
+"routes/document_helpers.py" = ["E402", "F401", "F811"]
+"routes/document_routes.py" = ["E402"]
+"routes/email_helpers.py" = ["E402"]
+"routes/email_pollers.py" = ["F401"]
+"routes/email_routes.py" = ["F401"]
+"routes/gallery_helpers.py" = ["E402"]
+"routes/memory_routes.py" = ["E402"]
+"routes/model_routes.py" = ["F601", "F841"]
+"routes/openai_compat_routes.py" = ["F401"]
+"routes/skills_routes.py" = ["F401"]
+"routes/vault_routes.py" = ["F401"]
+"routes/webhook_routes.py" = ["E402"]
+"scripts/*" = ["E402", "F401", "F841"]
+"src/agent_loop.py" = ["F401"]
+"src/agent_tools.py" = ["F401"]
+"src/ai_interaction.py" = ["E402"]
+"src/assistant_log.py" = ["F401"]
+"src/builtin_actions.py" = ["F401"]
+"src/caldav_sync.py" = ["F401"]
+"src/document_actions.py" = ["F401", "F841"]
+"src/task_scheduler.py" = ["F401"]
+"src/tool_implementations.py" = ["F401", "F811"]
+"src/embeddings.py" = ["E402"]
+"src/upload_handler.py" = ["E402"]
+"routes/query_routes.py" = ["E402"]
+"routes/datasource_routes.py" = ["E402"]
+"routes/relationship_routes.py" = ["E402"]
+"tests/*" = ["E401", "E402", "F401", "F541", "F811", "F841"]

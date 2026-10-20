@@ -1,0 +1,7 @@
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Known non-secret placeholder in the imported baseline history"
+regexTarget = "secret"
+regexes = ['''^dev-token-abc123$''']

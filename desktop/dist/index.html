@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Prism</title>
+    <style>
+      body {
+        margin: 0;
+        height: 100vh;
+        display: grid;
+        place-items: center;
+        font-family: system-ui, sans-serif;
+        background: #0e0e12;
+        color: #d8d8e0;
+      }
+      .box { text-align: center; opacity: 0.8; }
+    </style>
+  </head>
+  <body>
+    <!--
+      Placeholder only. The desktop shell (src-tauri/src/main.rs) starts the
+      Prism backend, health-gates it, then opens the main window directly at the
+      backend URL (WebviewUrl::External). This file is served by Tauri only as a
+      static frontendDist and is shown solely if that override ever fails to load.
+    -->
+    <div class="box">
+      <h1>Prism</h1>
+      <p>Starting the local backend&hellip;</p>
+    </div>
+  </body>
+</html>

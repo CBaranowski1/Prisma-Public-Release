@@ -1,0 +1,16 @@
+/* classic.css — flat enterprise cosmetics. Square corners, no glass/blur,
+   1px solid borders, IBM-blue accent. Structure comes from shell.css. */
+:root[data-theme="classic"]{
+  --accent:#0f62fe; --accent2:#0f62fe;
+  --accent-grad:#0f62fe;
+  --line:#c8c4bc; --muted:#6f6a63;
+  --radius:2px; --glass-blur:0px;
+  --shadow:0 1px 2px rgba(0,0,0,0.12);
+}
+:root[data-theme="classic"] body{ background:var(--bg); }
+/* Solid, flat panels everywhere — kill any inherited translucency/blur. */
+:root[data-theme="classic"] .mode-switch,
+:root[data-theme="classic"] .glass{
+  background:var(--panel); backdrop-filter:none; -webkit-backdrop-filter:none;
+}
+:root[data-theme="classic"] .mode-opt.active{ color:#ffffff; background:var(--accent); box-shadow:none; }

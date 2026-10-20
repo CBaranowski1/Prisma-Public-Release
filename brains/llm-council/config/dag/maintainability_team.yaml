@@ -1,0 +1,14 @@
+id: maintainability_team
+description: "Maintainability/quality team: triage -> quality disciplines -> leads -> chief (shares memory pools)"
+seats:
+  - {id: triage, role: triage, model_ref: triage, lens: routing, stance: "intake router", prompt_path: triage.md, temperature: 0.0, consumes: []}
+  - {id: maint_refactor, role: reviewer, model_ref: reviewer.maintainability, lens: maintainability, stance: "refactoring engineer", prompt_path: reviewer_specialist.md, temperature: 0.2, group: mid_a, consumes: [triage]}
+  - {id: maint_clarity, role: reviewer, model_ref: reviewer.maintainability, lens: clarity, stance: "readability advocate", prompt_path: reviewer_specialist.md, temperature: 0.2, group: mid_a, consumes: [triage]}
+  - {id: maint_arch, role: reviewer, model_ref: reviewer.correctness, lens: architecture, stance: "architecture reviewer", prompt_path: reviewer_specialist.md, temperature: 0.2, group: mid_a, consumes: [triage]}
+  - {id: maint_test, role: reviewer, model_ref: reviewer.correctness, lens: testing, stance: "test-quality engineer", prompt_path: reviewer_specialist.md, temperature: 0.2, group: mid_a, consumes: [triage]}
+  - {id: maint_docs, role: reviewer, model_ref: reviewer.maintainability, lens: documentation, stance: "docs engineer", prompt_path: reviewer_specialist.md, temperature: 0.2, group: mid_b, consumes: [triage]}
+  - {id: maint_debt, role: reviewer, model_ref: reviewer.correctness, lens: redundancy, stance: "tech-debt/DRY analyst", prompt_path: reviewer_specialist.md, temperature: 0.2, group: mid_b, consumes: [triage]}
+  - {id: maint_perf, role: reviewer, model_ref: reviewer.performance, lens: performance, stance: "performance reviewer", prompt_path: reviewer_specialist.md, temperature: 0.2, group: mid_b, consumes: [triage]}
+  - {id: maint_lead, role: mid_overseer, model_ref: overseer.mid_a, lens: "engineering quality", stance: "quality lead", prompt_path: overseer_mid_a.md, temperature: 0.3, consumes: [maint_refactor, maint_clarity, maint_arch, maint_test]}
+  - {id: maint_risk, role: mid_overseer, model_ref: overseer.mid_b, lens: "risk & hygiene", stance: "risk lead", prompt_path: overseer_mid_b.md, temperature: 0.3, consumes: [maint_docs, maint_debt, maint_perf]}
+  - {id: maint_chief, role: chief, model_ref: overseer.chief, lens: "quality verdict", stance: "engineering director", prompt_path: overseer_chief.md, temperature: 0.3, consumes: [maint_lead, maint_risk]}

@@ -1,0 +1,73 @@
+venv/
+.venv/
+node_modules/
+services/node_modules/
+# IDE fork - large Rust build artifacts + binaries, not needed in container
+prismaIDE-pathA/
+prismaIDE-pathB/
+prismaIDE/
+# Tauri desktop app build - binaries not needed in backend container
+desktop/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.env
+.env.bak.*
+/data/
+/logs/
+# The DGX model cache is a host-mounted vLLM asset. Sending it as part of the
+# Prisma backend build context can add tens of gigabytes without affecting the
+# image.
+/deploy/dgx-spark/cache/
+.git/
+# Bundle only the immutable Council skill packages. Other .claude state can
+# contain local settings/session data and must never enter the image.
+.claude/*
+.playwright-mcp/
+.pytest_cache/
+.vscode/
+.idea/
+dev-docs/
+docs/
+*.md
+*.db
+*.sqlite
+*.sqlite3
+/reports/
+/research_data/
+tasks/
+_scratch/
+compound.config.json
+search_analytics.json
+**/search_analytics.json
+tests/
+api/
+*.log
+*.error.log
+chart.png
+timetree*.png
+*_signin_page.png
+*_calendar_view.png
+.gitignore
+.superpowers/
+# Eval/benchmark artifacts
+cc_*.jsonl
+he_*.jsonl
+mbpp_*.jsonl
+code_*.jsonl
+problems_*.jsonl
+*.fails.json
+test_results.txt
+stdio
+.ruff_cache/
+brains/*/conversations/
+brains/*/index/
+brains/*/graph.json
+
+# Keep these exceptions last: the generic *.md rule above would otherwise
+# re-exclude every SKILL.md after the .claude subtree is opened.
+!.claude/skills/
+!.claude/skills/**

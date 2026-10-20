@@ -1,0 +1,24 @@
+#!/bin/sh
+set -eu
+
+allow_main="${PRISMA_ALLOW_MAIN_PUSH:-0}"
+while read -r local_ref local_sha remote_ref remote_sha; do
+    if [ "$remote_ref" = "refs/heads/main" ] && [ "$allow_main" != "1" ]; then
+        echo "Direct pushes to main are blocked for this checkout." >&2
+        echo "Push a change/* branch and merge it through a GitHub pull request." >&2
+        exit 1
+    fi
+done
+
+gitleaks_bin="$(git config --get prisma.gitleaksPath || true)"
+if [ -z "$gitleaks_bin" ]; then
+    gitleaks_bin="$(command -v gitleaks || true)"
+fi
+
+if [ -z "$gitleaks_bin" ]; then
+    echo "Push blocked: Gitleaks is not installed or configured." >&2
+    echo "Run scripts/setup-git-safety.ps1, then retry." >&2
+    exit 1
+fi
+
+"$gitleaks_bin" git --redact --no-banner .

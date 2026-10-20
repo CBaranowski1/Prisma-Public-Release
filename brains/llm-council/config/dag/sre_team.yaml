@@ -1,0 +1,125 @@
+id: sre_team
+description: 'SRE/reliability team: triage -> reliability disciplines -> leads -> chief (shares memory pools)'
+seats:
+- id: triage
+  role: triage
+  model_ref: triage
+  lens: routing
+  stance: intake router
+  prompt_path: triage.md
+  temperature: 0.0
+  consumes: []
+- id: sre_reliability
+  role: reviewer
+  model_ref: reviewer.performance
+  lens: observability
+  stance: reliability engineer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_a
+  consumes:
+  - triage
+- id: sre_platform
+  role: reviewer
+  model_ref: reviewer.security
+  lens: infrastructure as code
+  stance: platform engineer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_a
+  consumes:
+  - triage
+- id: sre_perf
+  role: reviewer
+  model_ref: reviewer.performance
+  lens: performance
+  stance: performance engineer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_a
+  consumes:
+  - triage
+- id: sre_chaos
+  role: reviewer
+  model_ref: reviewer.correctness
+  lens: testing
+  stance: chaos/resilience engineer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_b
+  consumes:
+  - triage
+- id: sre_secops
+  role: reviewer
+  model_ref: reviewer.security
+  lens: security operations
+  stance: secops engineer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_b
+  consumes:
+  - triage
+- id: sre_backend
+  role: reviewer
+  model_ref: reviewer.correctness
+  lens: backend engineering
+  stance: backend reliability engineer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_b
+  consumes:
+  - triage
+- id: sre_resilience
+  role: reviewer
+  model_ref: reviewer.correctness
+  lens: resilience & error-handling
+  stance: resilience & error-handling reviewer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_a
+  consumes:
+  - triage
+- id: sre_release
+  role: reviewer
+  model_ref: reviewer.correctness
+  lens: release engineering
+  stance: release engineering reviewer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_a
+  consumes:
+  - triage
+- id: sre_lead
+  role: mid_overseer
+  model_ref: overseer.mid_a
+  lens: reliability delivery
+  stance: SRE lead
+  prompt_path: overseer_mid_a.md
+  temperature: 0.3
+  consumes:
+  - sre_reliability
+  - sre_platform
+  - sre_perf
+  - sre_resilience
+  - sre_release
+- id: sre_risk
+  role: mid_overseer
+  model_ref: overseer.mid_b
+  lens: operational risk
+  stance: ops risk lead
+  prompt_path: overseer_mid_b.md
+  temperature: 0.3
+  consumes:
+  - sre_chaos
+  - sre_secops
+  - sre_backend
+- id: sre_chief
+  role: chief
+  model_ref: overseer.chief
+  lens: reliability verdict
+  stance: head of SRE
+  prompt_path: overseer_chief.md
+  temperature: 0.3
+  consumes:
+  - sre_lead
+  - sre_risk

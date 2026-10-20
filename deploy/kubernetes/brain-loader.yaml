@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: prisma-brain-loader
+  namespace: prisma
+  labels:
+    app.kubernetes.io/name: prisma-brain-loader
+spec:
+  restartPolicy: Never
+  automountServiceAccountToken: false
+  enableServiceLinks: false
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+    seccompProfile:
+      type: RuntimeDefault
+  containers:
+    - name: loader
+      image: busybox:1.36.1
+      command:
+        - /bin/sh
+        - -c
+        - mkdir -p /app/data/brains; trap 'exit 0' TERM INT; while :; do sleep 3600 & wait $!; done
+      securityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        capabilities:
+          drop:
+            - ALL
+      resources:
+        requests:
+          cpu: 10m
+          memory: 16Mi
+        limits:
+          cpu: 100m
+          memory: 64Mi
+      volumeMounts:
+        - name: data
+          mountPath: /app/data
+        - name: tmp
+          mountPath: /tmp
+  volumes:
+    - name: data
+      persistentVolumeClaim:
+        claimName: prisma-data
+    - name: tmp
+      emptyDir:
+        sizeLimit: 512Mi

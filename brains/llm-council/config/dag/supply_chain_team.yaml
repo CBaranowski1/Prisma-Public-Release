@@ -1,0 +1,13 @@
+id: supply_chain_team
+description: "Supply-chain / trade team: triage -> WMS/ERP/FTZ/trade/integration/domain -> ops & risk leads -> chief (shares memory pools)"
+seats:
+  - {id: triage, role: triage, model_ref: triage, lens: routing, stance: "intake router", prompt_path: triage.md, temperature: 0.0, consumes: []}
+  - {id: sc_wms, role: reviewer, model_ref: reviewer.correctness, lens: "warehouse management", stance: "WMS specialist", prompt_path: reviewer_specialist.md, temperature: 0.2, group: mid_a, consumes: [triage]}
+  - {id: sc_erp, role: reviewer, model_ref: reviewer.correctness, lens: "ERP integration", stance: "ERP specialist", prompt_path: reviewer_specialist.md, temperature: 0.2, group: mid_a, consumes: [triage]}
+  - {id: sc_ftz, role: reviewer, model_ref: reviewer.security, lens: "FTZ compliance", stance: "Foreign-Trade-Zone specialist", prompt_path: reviewer_specialist.md, temperature: 0.2, group: mid_a, consumes: [triage]}
+  - {id: sc_trade, role: reviewer, model_ref: reviewer.security, lens: "trade compliance", stance: "international-trade specialist", prompt_path: reviewer_specialist.md, temperature: 0.2, group: mid_b, consumes: [triage]}
+  - {id: sc_integration, role: reviewer, model_ref: reviewer.maintainability, lens: "systems integration", stance: "integration/data specialist", prompt_path: reviewer_specialist.md, temperature: 0.2, group: mid_b, consumes: [triage]}
+  - {id: sc_domain, role: reviewer, model_ref: reviewer.correctness, lens: "domain modeling", stance: "supply-chain domain modeler", prompt_path: reviewer_specialist.md, temperature: 0.2, group: mid_b, consumes: [triage]}
+  - {id: sc_lead, role: mid_overseer, model_ref: overseer.mid_a, lens: "operations quality", stance: "supply-chain ops lead", prompt_path: overseer_mid_a.md, temperature: 0.3, consumes: [sc_wms, sc_erp, sc_ftz]}
+  - {id: sc_risk, role: mid_overseer, model_ref: overseer.mid_b, lens: "compliance risk", stance: "trade-risk lead", prompt_path: overseer_mid_b.md, temperature: 0.3, consumes: [sc_trade, sc_integration, sc_domain]}
+  - {id: sc_chief, role: chief, model_ref: overseer.chief, lens: "supply-chain verdict", stance: "supply-chain director", prompt_path: overseer_chief.md, temperature: 0.3, consumes: [sc_lead, sc_risk]}

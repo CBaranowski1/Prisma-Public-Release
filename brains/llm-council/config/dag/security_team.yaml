@@ -1,0 +1,125 @@
+id: security_team
+description: 'Security team: triage -> security disciplines -> red/blue leads -> CISO (shares memory pools)'
+seats:
+- id: triage
+  role: triage
+  model_ref: triage
+  lens: routing
+  stance: intake router
+  prompt_path: triage.md
+  temperature: 0.0
+  consumes: []
+- id: sec_appsec
+  role: reviewer
+  model_ref: reviewer.security
+  lens: application security
+  stance: appsec engineer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_a
+  consumes:
+  - triage
+- id: sec_infra
+  role: reviewer
+  model_ref: reviewer.security
+  lens: infrastructure security
+  stance: infra/cloud security engineer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_a
+  consumes:
+  - triage
+- id: sec_detection
+  role: reviewer
+  model_ref: reviewer.performance
+  lens: detection & response
+  stance: SIEM/observability security engineer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_a
+  consumes:
+  - triage
+- id: sec_data
+  role: reviewer
+  model_ref: reviewer.correctness
+  lens: data security
+  stance: data-protection/privacy engineer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_b
+  consumes:
+  - triage
+- id: sec_api
+  role: reviewer
+  model_ref: reviewer.maintainability
+  lens: API security
+  stance: API security reviewer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_b
+  consumes:
+  - triage
+- id: sec_prompt
+  role: reviewer
+  model_ref: reviewer.security
+  lens: LLM/agent security
+  stance: prompt & agent-safety engineer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_b
+  consumes:
+  - triage
+- id: sec_depsec
+  role: reviewer
+  model_ref: reviewer.security
+  lens: dependency / supply-chain security
+  stance: dependency / supply-chain security reviewer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_b
+  consumes:
+  - triage
+- id: sec_privacy
+  role: reviewer
+  model_ref: reviewer.security
+  lens: data privacy & compliance
+  stance: data privacy & compliance reviewer
+  prompt_path: reviewer_specialist.md
+  temperature: 0.2
+  group: mid_a
+  consumes:
+  - triage
+- id: sec_lead_blue
+  role: mid_overseer
+  model_ref: overseer.mid_a
+  lens: defensive quality
+  stance: blue-team lead
+  prompt_path: overseer_mid_a.md
+  temperature: 0.3
+  consumes:
+  - sec_appsec
+  - sec_infra
+  - sec_detection
+  - sec_privacy
+- id: sec_lead_red
+  role: mid_overseer
+  model_ref: overseer.mid_b
+  lens: offensive risk
+  stance: red-team lead
+  prompt_path: overseer_mid_b.md
+  temperature: 0.3
+  consumes:
+  - sec_data
+  - sec_api
+  - sec_prompt
+  - sec_depsec
+- id: sec_ciso
+  role: chief
+  model_ref: overseer.chief
+  lens: security verdict
+  stance: CISO
+  prompt_path: overseer_chief.md
+  temperature: 0.3
+  consumes:
+  - sec_lead_blue
+  - sec_lead_red

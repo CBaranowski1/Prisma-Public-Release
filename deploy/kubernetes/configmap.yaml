@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prisma-config
+data:
+  AUTH_ENABLED: "false"
+  LOCALHOST_BYPASS: "false"
+  PRISM_DATA_DIR: /app/data
+  PRISMA_BRAINS_ROOT: /app/data/brains
+  PRISMA_SKIP_ENV_FILE: "1"
+  CHROMADB_HOST: chromadb
+  CHROMADB_PORT: "8000"
+  PRISMA_INPROCESS_POLLERS: "1"
+  PRISMA_INPROCESS_TASKS: "1"
+  DGX_SPARK_ALLOW_INSECURE_NO_AUTH: "false"
+  DGX_SPARK_MAX_MODEL_LEN: "32768"
