@@ -3,9 +3,7 @@
 > **Public source release.** Application code, tests, council/agent runtimes, bundled system skills and generic configuration are included. Private vault/brain knowledge, personal state, credentials and customer-specific configurations are not. Add your own model endpoint and knowledge data. See [architecture](docs/PUBLIC-TOPOLOGY.md) and [release scope](PUBLIC-SNAPSHOT.md).
 
 
-This a very sanitized release, its about as bare bones of an architecture as it gets. There was a lot of customization and building form the back end that made this all work. I recommend using this architecture as a blue print only. This not a plug and play product a dev needs to take some serious time to customize this to meet their specific needs. -Cody Baranowski
-
-
+This is a heavily sanitized release, and it represents only the bare bones of the architecture. A significant amount of customization and backend development went into making the original system work. I recommend using this architecture as a blueprint only. This is not a plug-and-play product. A developer will need to invest considerable time customizing and configuring the system to meet their specific needs. -Cody Baranowski
 
 A self-hosted AI workspace -- meant to be the self-hosted version of the UI experience you get from ChatGPT and Claude. But with more jank and fun. Running on your own hardware, with your own data -- local-first, privacy-first, and no trojan.
 
