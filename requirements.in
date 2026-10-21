@@ -1,6 +1,6 @@
 # Direct production dependencies. Exact versions are the tested input to
 # requirements.txt; run scripts/lock_dependencies.py after deliberate updates.
-fastapi==0.141.1
+fastapi==0.143.3
 uvicorn==0.52.0
 python-multipart==0.0.32
 python-dotenv==1.2.2
