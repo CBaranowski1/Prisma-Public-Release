@@ -8,12 +8,12 @@ httpx==0.28.1
 pydantic==2.13.4
 pydantic-settings==2.14.2
 SQLAlchemy==2.0.51
-pypdf==6.19.0
+pypdf==6.21.2
 beautifulsoup4==4.15.0
 charset-normalizer==3.4.9
 numpy==2.4.6
 chromadb-client==1.5.9
-fastembed==0.8.0
+fastembed==0.9.1
 youtube-transcript-api==1.2.4
 markdown==3.10.2
 nh3==0.3.6
@@ -31,3 +31,6 @@ croniter==6.2.4
 certifi==2026.10.19
 urllib3==2.8.0
 pyjwt[crypto]==2.15.0
+pillow==13.0.0
+filelock==4.2.1
+opentelemetry-api==1.45.1
