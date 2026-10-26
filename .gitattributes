@@ -4,6 +4,9 @@
 # "exec /usr/local/bin/entrypoint.sh: no such file or directory" (issues #150, #77).
 * text=auto
 
+# Preserve the exact reviewed bytes used by the security scanner's fixture hash.
+tests/test_brain_privacy.py text eol=lf
+
 # Shell scripts must stay LF on every platform (run by sh/bash, incl. in Docker).
 *.sh   text eol=lf
 *.bash text eol=lf
